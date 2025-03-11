@@ -122,9 +122,7 @@ class TransaccionesService {
         final transaccionActualizada =
             Transaccion.fromJson(jsonDecode(response.body));
 
-        // Try to update budgets but don't let it stop the transaction update if it fails
         try {
-          // Revert original transaction effects
           if (transaccionOriginal.tipoTransaccion == TipoTransacciones.GASTO) {
             await _presupuestosService.revertirTransaccion(
                 idUsuario, transaccionOriginal);
@@ -134,7 +132,6 @@ class TransaccionesService {
                 idUsuario, transaccionOriginal);
           }
 
-          // Apply updated transaction effects
           if (transaccionActualizada.tipoTransaccion ==
               TipoTransacciones.GASTO) {
             await _presupuestosService.actualizarPresupuestosConTransaccion(
@@ -145,8 +142,8 @@ class TransaccionesService {
                 idUsuario, transaccionActualizada);
           }
         } catch (budgetError) {
-          // Log the error but continue with returning the updated transaction
-          print('Error al actualizar presupuestos/metas: $budgetError');
+          throw Exception(
+              'Error al actualizar presupuestos/metas: $budgetError');
         }
 
         return transaccionActualizada;

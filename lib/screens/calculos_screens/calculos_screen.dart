@@ -2,18 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter_proyecto_app/components/custom_bottom_app_bar.dart';
 import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
 import 'package:flutter_proyecto_app/models/calculos_viewmodel.dart';
-import 'package:flutter_proyecto_app/screens/calculos_screen/seccion_prestamos.dart';
-import 'package:flutter_proyecto_app/screens/calculos_screen/seccion_proyecciones.dart';
-import 'package:flutter_proyecto_app/screens/calculos_screen/seccion_roi.dart';
-import 'package:flutter_proyecto_app/screens/calculos_screen/tiempo_meta.dart';
+import 'package:flutter_proyecto_app/screens/calculos_screens/seccion_prestamos.dart';
+import 'package:flutter_proyecto_app/screens/calculos_screens/seccion_proyecciones.dart';
+import 'package:flutter_proyecto_app/screens/calculos_screens/seccion_roi.dart';
+import 'package:flutter_proyecto_app/screens/calculos_screens/tiempo_meta.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class CalculosFinancierosScreen extends StatefulWidget {
   final int idUsuario;
 
-  const CalculosFinancierosScreen({Key? key, required this.idUsuario})
-      : super(key: key);
+  const CalculosFinancierosScreen({super.key, required this.idUsuario});
 
   @override
   State<CalculosFinancierosScreen> createState() =>
@@ -125,7 +124,6 @@ class _CalculosFinancierosScreenState extends State<CalculosFinancierosScreen>
 
   @override
   Widget build(BuildContext context) {
-    // Usar ChangeNotifierProvider para proporcionar el ViewModel a los widgets hijos
     return ChangeNotifierProvider(
       create: (_) => CalculosFinancierosViewModel(idUsuario: widget.idUsuario),
       child: Consumer<CalculosFinancierosViewModel>(
@@ -174,8 +172,8 @@ class _CalculosFinancierosScreenState extends State<CalculosFinancierosScreen>
                       TiempoMetaTab(),
                     ],
                   ),
-            bottomNavigationBar:
-                CustomBottomNavBar(idUsuario: widget.idUsuario, currentIndex: 0),
+            bottomNavigationBar: CustomBottomNavBar(
+                idUsuario: widget.idUsuario, currentIndex: 0),
           );
         },
       ),
@@ -183,108 +181,4 @@ class _CalculosFinancierosScreenState extends State<CalculosFinancierosScreen>
   }
 }
 
-class FinancialUIHelpers {
-  /// Build a section title with orange color and bold style
-  static Widget buildSectionTitle(String title) {
-    return Text(
-      title,
-      style: const TextStyle(
-        color: AppTheme.naranja,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
-    );
-  }
-
-  /// Build a styled input field for numeric input
-  static Widget buildInputField({
-    required String label,
-    required String initialValue,
-    required Function(String) onChanged,
-    required IconData prefixIcon,
-    TextInputType keyboardType = TextInputType.number,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppTheme.gris.withOpacity(0.3),
-        borderRadius: BorderRadius.circular(10),
-      ),
-      child: TextFormField(
-        initialValue: initialValue,
-        onChanged: onChanged,
-        keyboardType: keyboardType,
-        style: const TextStyle(color: AppTheme.blanco),
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: AppTheme.naranja),
-          prefixIcon: Icon(prefixIcon, color: AppTheme.naranja),
-          border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        ),
-      ),
-    );
-  }
-
-  /// Build a slider input with a label
-  static Widget buildSliderField({
-    required String label,
-    required double value,
-    required double min,
-    required double max,
-    required Function(double) onChanged,
-    int? divisions,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppTheme.naranja,
-            fontSize: 16,
-          ),
-        ),
-        Slider(
-          value: value,
-          min: min,
-          max: max,
-          divisions: divisions ?? (max - min).toInt(),
-          activeColor: AppTheme.naranja,
-          inactiveColor: AppTheme.gris,
-          onChanged: onChanged,
-        ),
-      ],
-    );
-  }
-
-  /// Build a result item with a label and value
-  static Widget buildResultItem({
-    required String label,
-    required String value,
-    required Color color,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: const TextStyle(
-            color: AppTheme.blanco,
-            fontSize: 14,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: TextStyle(
-            color: color,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      ],
-    );
-  }
-}
 

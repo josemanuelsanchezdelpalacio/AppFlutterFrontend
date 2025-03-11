@@ -106,7 +106,6 @@ class PresupuestosService {
   //metodo para actualizar los presupuestos afectados por una transaccion
   Future<void> actualizarPresupuestosConTransaccion(
       int idUsuario, Transaccion transaccion) async {
-
     //compruebo que la transaccion es de tipo gasto
     if (transaccion.tipoTransaccion != TipoTransacciones.GASTO) return;
 
@@ -125,7 +124,7 @@ class PresupuestosService {
       for (var presupuesto in presupuestosAplicables) {
         //creo presupuesto actualizado
         final presupuestoActualizado =
-            presupuesto.updateWithTransaction(transaccion.cantidad);
+            presupuesto.actualizarConTransaccion(transaccion.cantidad);
 
         //guardo los cambios en el backend
         await actualizarPresupuesto(
@@ -154,11 +153,10 @@ class PresupuestosService {
 
       //revierto los efectos en cada presupuesto
       for (var presupuesto in presupuestosAfectados) {
-
         //calculo los nuevos valores restando la transaccion
         double nuevaCantidadGastada =
             (presupuesto.cantidadGastada) - transaccion.cantidad;
-        
+
         //aseguro que no quede en negativo
         if (nuevaCantidadGastada < 0) nuevaCantidadGastada = 0;
 

@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_proyecto_app/components/componentesUI_calculos.dart';
 import 'package:flutter_proyecto_app/models/calculos_viewmodel.dart';
-import 'package:flutter_proyecto_app/screens/calculos_screen/calculos_screen.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class PrestamosTab extends StatelessWidget {
+  const PrestamosTab({super.key});
+
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CalculosFinancierosViewModel>(context);
     final resultadosPrestamo = viewModel.calcularPrestamo();
     final tablaAmortizacion = viewModel.calcularTablaAmortizacion();
-    
+
     final cuotaMensual = resultadosPrestamo['cuotaMensual'];
     final totalPagado = resultadosPrestamo['totalPagado'];
     final totalIntereses = resultadosPrestamo['totalIntereses'];
@@ -21,33 +23,30 @@ class PrestamosTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FinancialUIHelpers.buildSectionTitle('Cálculo de Préstamos'),
+          ComponentesuiCalculos.buildSeccionTitulo('Cálculo de Préstamos'),
           const SizedBox(height: 16),
-          
-          FinancialUIHelpers.buildInputField(
+          ComponentesuiCalculos.buildCampos(
             label: 'Monto del Préstamo',
             initialValue: viewModel.montoPrestamo.toString(),
             onChanged: (value) {
-              viewModel.setMontoPrestamo(double.tryParse(value) ?? viewModel.montoPrestamo);
+              viewModel.setMontoPrestamo(
+                  double.tryParse(value) ?? viewModel.montoPrestamo);
             },
             prefixIcon: Icons.attach_money,
           ),
-          
           const SizedBox(height: 12),
-          
-          FinancialUIHelpers.buildInputField(
-            label: 'Tasa de Interés Anual (%)',
+          ComponentesuiCalculos.buildCampos(
+            label: 'Tasa de interes anual (%)',
             initialValue: viewModel.tasaInteres.toString(),
             onChanged: (value) {
-              viewModel.setTasaInteres(double.tryParse(value) ?? viewModel.tasaInteres);
+              viewModel.setTasaInteres(
+                  double.tryParse(value) ?? viewModel.tasaInteres);
             },
             prefixIcon: Icons.percent,
           ),
-          
           const SizedBox(height: 12),
-          
-          FinancialUIHelpers.buildSliderField(
-            label: 'Plazo del Préstamo (meses): ${viewModel.plazoPrestamo}',
+          ComponentesuiCalculos.buildCampoDeslizante(
+            label: 'Plazo del Prestamo (meses): ${viewModel.plazoPrestamo}',
             value: viewModel.plazoPrestamo.toDouble(),
             min: 1,
             max: 60,
@@ -55,9 +54,7 @@ class PrestamosTab extends StatelessWidget {
               viewModel.setPlazoPrestamo(value.toInt());
             },
           ),
-          
           const SizedBox(height: 24),
-          
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -68,7 +65,7 @@ class PrestamosTab extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Cuota Mensual: \$${cuotaMensual.toStringAsFixed(2)}',
+                  'Cuota mensual: \$${cuotaMensual.toStringAsFixed(2)}',
                   style: const TextStyle(
                     color: AppTheme.blanco,
                     fontSize: 24,
@@ -76,37 +73,29 @@ class PrestamosTab extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
-                FinancialUIHelpers.buildResultItem(
-                  label: 'Tasa Mensual',
+                ComponentesuiCalculos.buildItemResultados(
+                  label: 'Tasa mensual',
                   value: '${tasaMensual.toStringAsFixed(2)}%',
                   color: AppTheme.blanco,
                 ),
-                
                 const SizedBox(height: 8),
-                
-                FinancialUIHelpers.buildResultItem(
-                  label: 'Total a Pagar',
+                ComponentesuiCalculos.buildItemResultados(
+                  label: 'Total a pagar',
                   value: '\$${totalPagado.toStringAsFixed(2)}',
                   color: AppTheme.blanco,
                 ),
-                
                 const SizedBox(height: 8),
-                
-                FinancialUIHelpers.buildResultItem(
-                  label: 'Total Intereses',
+                ComponentesuiCalculos.buildItemResultados(
+                  label: 'Total intereses',
                   value: '\$${totalIntereses.toStringAsFixed(2)}',
                   color: Colors.orange,
                 ),
               ],
             ),
           ),
-          
           const SizedBox(height: 24),
-          
-          FinancialUIHelpers.buildSectionTitle('Tabla de Amortización'),
+          ComponentesuiCalculos.buildSeccionTitulo('Tabla de amortizacion'),
           const SizedBox(height: 12),
-          
           Container(
             decoration: BoxDecoration(
               color: AppTheme.gris.withOpacity(0.3),
@@ -116,8 +105,8 @@ class PrestamosTab extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 columnSpacing: 18,
-                headingRowColor: MaterialStateProperty.all(AppTheme.gris),
-                dataRowColor: MaterialStateProperty.all(Colors.transparent),
+                headingRowColor: WidgetStateProperty.all(AppTheme.gris),
+                dataRowColor: WidgetStateProperty.all(Colors.transparent),
                 columns: const [
                   DataColumn(
                     label: Text(
@@ -139,7 +128,7 @@ class PrestamosTab extends StatelessWidget {
                   ),
                   DataColumn(
                     label: Text(
-                      'Interés',
+                      'Interes',
                       style: TextStyle(
                         color: AppTheme.blanco,
                         fontWeight: FontWeight.bold,
@@ -148,7 +137,7 @@ class PrestamosTab extends StatelessWidget {
                   ),
                   DataColumn(
                     label: Text(
-                      'Amortización',
+                      'Amortizacion',
                       style: TextStyle(
                         color: AppTheme.blanco,
                         fontWeight: FontWeight.bold,

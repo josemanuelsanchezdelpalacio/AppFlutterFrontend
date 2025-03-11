@@ -109,7 +109,6 @@ class MetasAhorroService {
   //metodo para actualizar las metas de ahorro afectadas por una transaccion
   Future<void> actualizarMetasPorTransaccion(
       int idUsuario, Transaccion transaccion) async {
-
     //compruebo que la transaccion es de tipo ingreso
     if (transaccion.tipoTransaccion != TipoTransacciones.INGRESO) return;
 
@@ -158,7 +157,6 @@ class MetasAhorroService {
   //metodo para revertir los efectos de una transaccion en las metas de ahorro
   Future<void> revertirTransaccion(
       int idUsuario, Transaccion transaccion) async {
-    
     if (transaccion.tipoTransaccion != TipoTransacciones.INGRESO) return;
 
     try {
@@ -173,7 +171,6 @@ class MetasAhorroService {
 
       //revierto los efectos en cada meta
       for (var meta in metasAfectadas) {
-
         //calculo los nuevos valores restando la transaccion
         double nuevaCantidadActual = meta.cantidadActual - transaccion.cantidad;
 
@@ -202,5 +199,3 @@ class MetasAhorroService {
     }
   }
 }
-
-

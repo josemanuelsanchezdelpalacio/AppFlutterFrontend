@@ -19,7 +19,8 @@ class LoginViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> iniciarSesion(String email, String contrasena, BuildContext context) async {
+  Future<void> iniciarSesion(
+      String email, String contrasena, BuildContext context) async {
     if (_isLoading) return;
 
     _setLoading(true);
@@ -82,7 +83,8 @@ class LoginViewModel with ChangeNotifier {
       if (context.mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(_mensajeError ?? 'Error al iniciar sesión con Google'),
+            content:
+                Text(_mensajeError ?? 'Error al iniciar sesión con Google'),
             backgroundColor: Colors.red,
           ),
         );
@@ -91,7 +93,7 @@ class LoginViewModel with ChangeNotifier {
       _setLoading(false);
     }
   }
-  
+
   Future<void> recuperarContrasena(String email) async {
     try {
       await _authService.recuperarContrasenia(email);

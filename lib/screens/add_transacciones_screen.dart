@@ -7,32 +7,32 @@ import 'package:flutter_proyecto_app/models/add_transacciones_viewmodel.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:intl/intl.dart';
 
-class AddTransactionScreen extends StatefulWidget {
+class AddTransaccionesScreen extends StatefulWidget {
   final int idUsuario;
   final Transaccion? transaccionEditar;
 
-  const AddTransactionScreen({
-    Key? key,
+  const AddTransaccionesScreen({
+    super.key,
     required this.idUsuario,
     this.transaccionEditar,
-  }) : super(key: key);
+  });
 
   @override
-  State<AddTransactionScreen> createState() => _AddTransactionScreenState();
+  State<AddTransaccionesScreen> createState() => _AddTransaccionesScreenState();
 }
 
-class _AddTransactionScreenState extends State<AddTransactionScreen> {
-  late AddTransactionViewModel _viewModel;
+class _AddTransaccionesScreenState extends State<AddTransaccionesScreen> {
+  late AddTransaccionesViewModel _viewModel;
 
   @override
   void initState() {
     super.initState();
-    _viewModel = AddTransactionViewModel(
+    _viewModel = AddTransaccionesViewModel(
       idUsuario: widget.idUsuario,
       transaccionEditar: widget.transaccionEditar,
     );
 
-    // Inicializar el ViewModel
+    //inicializo el ViewModel
     _viewModel.init();
   }
 
@@ -44,12 +44,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Determinar si estamos en modo edición
+    //determino si estamos en modo edicion
     final bool isEditMode = widget.transaccionEditar != null;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(isEditMode ? 'Editar Transacción' : 'Nueva Transacción'),
+        title: Text(isEditMode ? 'Editar transaccion' : 'Nueva transaccion'),
         centerTitle: true,
       ),
       drawer: MenuDesplegable(idUsuario: widget.idUsuario),
@@ -60,7 +60,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Tipo de transacción (Ingreso/Gasto)
+              //tipo de transaccion (Ingreso/Gasto)
               Container(
                 decoration: BoxDecoration(
                   color: AppTheme.gris,
@@ -71,7 +71,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
-                      'Tipo de Transacción',
+                      'Tipo de transaccion',
                       style: TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.bold,
@@ -134,7 +134,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     return 'Por favor ingresa una cantidad';
                   }
                   if (double.tryParse(value.replaceAll(',', '.')) == null) {
-                    return 'Por favor ingresa un número válido';
+                    return 'Por favor ingresa un numero valido';
                   }
                   return null;
                 },
@@ -142,7 +142,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               const SizedBox(height: 16),
 
-              // Descripción - Permitir caracteres alfanuméricos
+              //campo de descripcion
               TextFormField(
                 controller: _viewModel.descripcionController,
                 decoration: const InputDecoration(
@@ -150,10 +150,10 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   prefixIcon: Icon(Icons.description),
                   hintText: 'Ingresa una descripción',
                 ),
-                maxLength: 100, // Limitar longitud
+                maxLength: 200,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa una descripción';
+                    return 'Por favor ingresa una descripcion';
                   }
                   return null;
                 },
@@ -161,12 +161,59 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               const SizedBox(height: 16),
 
-              // Categoría - Widget actualizado para evitar el error
+              //campo de categoria
               _buildCategoriasDropdown(),
+
+              // Campo para nueva categoría
+              if (_viewModel.mostrarNuevaCategoria) ...[
+                const SizedBox(height: 16),
+                Row(
+                  children: [
+                    Expanded(
+                      child: TextFormField(
+                        controller: _viewModel.nuevaCategoriaController,
+                        decoration: const InputDecoration(
+                          labelText: 'Nueva categoría',
+                          prefixIcon: Icon(Icons.add_circle_outline),
+                          hintText: 'Ingresa el nombre de la nueva categoría',
+                        ),
+                        validator: _viewModel.mostrarNuevaCategoria
+                            ? (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Por favor ingresa un nombre para la categoría';
+                                }
+                                return null;
+                              }
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    ElevatedButton(
+                      onPressed: () {
+                        final nuevaCategoria =
+                            _viewModel.nuevaCategoriaController.text.trim();
+                        if (nuevaCategoria.isNotEmpty) {
+                          setState(() {
+                            _viewModel
+                                .agregarCategoriaPersonalizada(nuevaCategoria);
+                          });
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppTheme.naranja,
+                        foregroundColor: AppTheme.blanco,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 15),
+                      ),
+                      child: const Icon(Icons.check),
+                    ),
+                  ],
+                ),
+              ],
 
               const SizedBox(height: 16),
 
-              // Fecha de transacción
+              //campo de fecha
               InkWell(
                 onTap: () => _selectDate(context, false),
                 child: InputDecorator(
@@ -177,13 +224,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   child: Text(
                     DateFormat('dd/MM/yyyy')
                         .format(_viewModel.fechaTransaccion),
+                    style: const TextStyle(color: AppTheme.blanco),
                   ),
                 ),
               ),
 
               const SizedBox(height: 20),
 
-              // Transacción recurrente
+              //campo de transaccion recurrente
               Container(
                 decoration: BoxDecoration(
                   color: AppTheme.gris,
@@ -197,7 +245,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         const Text(
-                          '¿Es una transacción recurrente?',
+                          '¿Es una transaccion recurrente?',
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -217,7 +265,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     if (_viewModel.transaccionRecurrente) ...[
                       const SizedBox(height: 16),
 
-                      // Frecuencia de recurrencia
+                      //frecuencia de recurrencia
                       DropdownButtonFormField<String>(
                         value: _viewModel.frecuenciaRecurrencia,
                         isExpanded: true,
@@ -225,10 +273,15 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           labelText: 'Frecuencia',
                           prefixIcon: Icon(Icons.repeat),
                         ),
+                        style: const TextStyle(color: AppTheme.blanco),
+                        dropdownColor: AppTheme.colorFondo,
                         items: _viewModel.frecuencias.map((String frecuencia) {
                           return DropdownMenuItem<String>(
                             value: frecuencia,
-                            child: Text(frecuencia),
+                            child: Text(
+                              frecuencia,
+                              style: const TextStyle(color: AppTheme.blanco),
+                            ),
                           );
                         }).toList(),
                         onChanged: (String? newValue) {
@@ -255,7 +308,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                         onTap: () => _selectDate(context, true),
                         child: InputDecorator(
                           decoration: const InputDecoration(
-                            labelText: 'Fecha de finalización',
+                            labelText: 'Fecha de finalizacion',
                             prefixIcon: Icon(Icons.event_busy),
                           ),
                           child: Text(
@@ -263,6 +316,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 ? DateFormat('dd/MM/yyyy').format(
                                     _viewModel.fechaFinalizacionRecurrencia!)
                                 : 'Seleccionar fecha',
+                            style: const TextStyle(color: AppTheme.blanco),
                           ),
                         ),
                       ),
@@ -273,7 +327,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
               const SizedBox(height: 30),
 
-              // Botón para guardar
+              //boton para guardar o actualizar
               SizedBox(
                 width: double.infinity,
                 height: 56,
@@ -305,19 +359,17 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
-  // Nuevo método para construir el dropdown de categorías
+  //metodo para construir la lista desplegable de categorias
   Widget _buildCategoriasDropdown() {
-    // Obtener las categorías según el tipo de transacción seleccionado
-    final categorias = _viewModel.tipoTransaccion == TipoTransacciones.GASTO
-        ? _viewModel.categoriasGastos
-        : _viewModel.categoriasIngresos;
+    //obtener todas las categorías según el tipo de transacción seleccionado (incluye predefinidas, personalizadas y la opción "Nueva categoría...")
+    final categorias = _viewModel.categoriasPorTipo;
 
-    // Si la categoría actual no está en la lista actual de categorías,
-    // usamos la primera categoría de la lista como valor por defecto
+    //si la categoria actual no esta en la lista actual de categorias,
+    //uso la primera categoria de la lista como valor por defecto
     String currentValue = _viewModel.categoria;
     if (!categorias.contains(currentValue)) {
       currentValue = categorias.first;
-      // Actualizamos el valor en el ViewModel
+      //actualizo el valor en el ViewModel
       _viewModel.setCategoria(currentValue);
     }
 
@@ -325,13 +377,38 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       value: currentValue,
       isExpanded: true,
       decoration: const InputDecoration(
-        labelText: 'Categoría',
+        labelText: 'Categoria',
         prefixIcon: Icon(Icons.category),
       ),
+      style: const TextStyle(color: AppTheme.blanco),
+      dropdownColor: AppTheme.colorFondo,
       items: categorias.map((String categoria) {
+        // Personalización del estilo para la opción "Nueva categoría..."
+        if (categoria == 'Nueva categoría...') {
+          return DropdownMenuItem<String>(
+            value: categoria,
+            child: Row(
+              children: [
+                const Icon(Icons.add, color: AppTheme.naranja, size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  categoria,
+                  style: const TextStyle(
+                    color: AppTheme.naranja,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
         return DropdownMenuItem<String>(
           value: categoria,
-          child: Text(categoria),
+          child: Text(
+            categoria,
+            style: const TextStyle(color: AppTheme.blanco),
+          ),
         );
       }).toList(),
       onChanged: (String? newValue) {
@@ -343,14 +420,14 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       },
       validator: (value) {
         if (value == null || value.isEmpty) {
-          return 'Por favor selecciona una categoría';
+          return 'Por favor selecciona una categoria';
         }
         return null;
       },
     );
   }
 
-  // Método para mostrar un diálogo de selección de fecha
+  //metodo para mostrar un dialogo de seleccion de fecha
   Future<void> _selectDate(BuildContext context, bool isFinishDate) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -387,28 +464,45 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  // Método para guardar la transacción
+  //metodo para guardar la transaccion
   Future<void> _guardarTransaccion() async {
-    // Validar el formulario antes de intentar guardar
+    //valido el formulario antes de intentar guardar
     if (!_viewModel.formKey.currentState!.validate()) {
-      // Si el formulario no es válido, mostrar un mensaje
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text(
-              'Por favor completa todos los campos requeridos correctamente'),
+          content: Text('Completa todos los campos requeridos correctamente'),
           backgroundColor: Colors.orange,
         ),
       );
       return;
     }
 
-    // Si la transacción es recurrente, validar que se haya seleccionado una fecha de finalización
+    // Si se está mostrando la nueva categoría pero no se ha agregado aún
+    if (_viewModel.mostrarNuevaCategoria) {
+      final nuevaCategoria = _viewModel.nuevaCategoriaController.text.trim();
+      if (nuevaCategoria.isEmpty) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Debes agregar un nombre para la nueva categoría'),
+            backgroundColor: Colors.orange,
+          ),
+        );
+        return;
+      }
+
+      // Agregar la nueva categoría
+      setState(() {
+        _viewModel.agregarCategoriaPersonalizada(nuevaCategoria);
+      });
+    }
+
+    //SI la transacciON es recurrente, valido que se haya seleccionado una fecha de finalización
     if (_viewModel.transaccionRecurrente &&
         _viewModel.fechaFinalizacionRecurrencia == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
-              'Por favor selecciona una fecha de finalización para la transacción recurrente'),
+              'Selecciona una fecha de finalizacion para la transaccion recurrente'),
           backgroundColor: Colors.orange,
         ),
       );
@@ -422,22 +516,21 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(widget.transaccionEditar == null
-                ? 'Transacción creada con éxito'
-                : 'Transacción actualizada con éxito'),
+                ? 'Transaccion creada correctamente'
+                : 'Transaccion actualizada correctamente'),
             backgroundColor: Colors.green,
           ),
         );
 
-        // Navigate back regardless of any potential budget update issues
+        //cuando guardo la transaccion vuelve a la pantalla de TransaccionesScreen
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
-        // Show a more specific error message
-        String errorMessage = 'Error al guardar la transacción';
+        String errorMessage = 'Error al guardar la transaccion';
         if (e.toString().contains('presupuesto')) {
           errorMessage =
-              'La transacción se actualizó pero hubo un error al actualizar el presupuesto. Por favor, verifique su presupuesto.';
+              'La transaccion se actualizo pero hubo un error al actualizar el presupuesto';
         }
 
         ScaffoldMessenger.of(context).showSnackBar(

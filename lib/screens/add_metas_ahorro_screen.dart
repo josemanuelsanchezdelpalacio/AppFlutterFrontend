@@ -12,10 +12,10 @@ class AddMetasAhorroScreen extends StatefulWidget {
   final MetaAhorro? metaAhorroParaEditar;
 
   const AddMetasAhorroScreen({
-    Key? key,
+    super.key,
     required this.idUsuario,
     this.metaAhorroParaEditar,
-  }) : super(key: key);
+  });
 
   @override
   State<AddMetasAhorroScreen> createState() => _AddMetasAhorroScreenState();
@@ -130,7 +130,7 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    // Tarjeta de Meta de Ahorro (reemplaza la imagen)
+                    // Tarjeta de Meta de Ahorro con icono mejorado
                     Container(
                       margin: const EdgeInsets.only(bottom: 20),
                       decoration: BoxDecoration(
@@ -143,18 +143,11 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Icono centrado
-                            Container(
-                              padding: const EdgeInsets.all(12),
-                              decoration: BoxDecoration(
-                                color: AppTheme.naranja,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              child: const Icon(
-                                Icons.savings,
-                                color: Colors.black,
-                                size: 32,
-                              ),
+                            // Icono centrado (ahora naranja en vez de negro con fondo naranja)
+                            Icon(
+                              Icons.savings,
+                              color: AppTheme.naranja,
+                              size: 48,
                             ),
                             const SizedBox(height: 16),
                             // Texto "Nueva Meta de Ahorro" o "Editar Meta de Ahorro"
@@ -183,15 +176,32 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                       ),
                     ),
 
-                    // Categoría/Nombre
+                    // Nombre de la Meta de Ahorro
+                    TextFormField(
+                      controller: _viewModel.nombreController,
+                      decoration: const InputDecoration(
+                        labelText: 'Nombre de la Meta',
+                        prefixIcon: Icon(Icons.bookmark),
+                        hintText: 'Ej: Viaje a Paris, Nuevo Coche, etc.',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Por favor ingresa un nombre para tu meta';
+                        }
+                        return null;
+                      },
+                    ),
+
+                    const SizedBox(height: 16),
+
+                    // Categoría
                     Row(
                       children: [
                         Expanded(
                           child: DropdownButtonFormField<String>(
-                            value: _viewModel.categorias
-                                    .contains(_viewModel.categoriaController.text)
-                                ? _viewModel.categoriaController.text
-                                : _viewModel.categorias.last,
+                            value: _viewModel.categoriaController.text.isEmpty
+                                ? _viewModel.categorias.first
+                                : _viewModel.categoriaController.text,
                             decoration: const InputDecoration(
                               labelText: 'Categoría',
                               prefixIcon: Icon(Icons.category),
@@ -202,7 +212,8 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                                 value: categoria,
                                 child: Text(
                                   categoria,
-                                  style: const TextStyle(color: AppTheme.blanco),
+                                  style:
+                                      const TextStyle(color: AppTheme.blanco),
                                 ),
                               );
                             }).toList(),
@@ -234,17 +245,20 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                       Padding(
                         padding: const EdgeInsets.only(top: 16),
                         child: TextFormField(
-                          controller: _viewModel.categoriaPersonalizadaController,
+                          controller:
+                              _viewModel.categoriaPersonalizadaController,
                           decoration: const InputDecoration(
                             labelText: 'Categoría Personalizada',
                             prefixIcon: Icon(Icons.add_circle_outline),
+                            hintText: 'Ej: Educación, Navidad, Compras, etc.',
                           ),
                           // Permitir solo letras y espacios para la categoría personalizada
                           inputFormatters: [
-                            FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]')),
+                            FilteringTextInputFormatter.allow(
+                                RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]')),
                           ],
                           validator: (value) {
-                            if (_viewModel.isCustomCategory && 
+                            if (_viewModel.isCustomCategory &&
                                 (value == null || value.trim().isEmpty)) {
                               return 'Por favor ingresa una categoría personalizada';
                             }
@@ -262,20 +276,22 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                         labelText: 'Cantidad Objetivo',
                         prefixIcon: Icon(Icons.attach_money),
                       ),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       // Mejorado para aceptar solo números con hasta 2 decimales
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d+([.,]\d{0,2})?$')),
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d+([.,]\d{0,2})?$')),
                       ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Por favor ingresa el monto objetivo';
                         }
-                        
+
                         // Reemplazar coma por punto para conversión a double
                         final normalizedValue = value.replaceAll(',', '.');
                         final amount = double.tryParse(normalizedValue);
-                        
+
                         if (amount == null || amount <= 0) {
                           return 'Ingresa un monto válido mayor a 0';
                         }
@@ -300,21 +316,24 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                       decoration: const InputDecoration(
                         labelText: 'Cantidad Actual',
                         prefixIcon: Icon(Icons.attach_money),
+                        hintText: '0.00',
                       ),
-                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                      keyboardType:
+                          const TextInputType.numberWithOptions(decimal: true),
                       // Mejorado para aceptar solo números con hasta 2 decimales
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(RegExp(r'^\d+([.,]\d{0,2})?$')),
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d+([.,]\d{0,2})?$')),
                       ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Por favor ingresa la cantidad actual';
                         }
-                        
+
                         // Reemplazar coma por punto para conversión a double
                         final normalizedValue = value.replaceAll(',', '.');
                         final amount = double.tryParse(normalizedValue);
-                        
+
                         if (amount == null || amount < 0) {
                           return 'Ingresa un monto válido (puede ser 0)';
                         }
@@ -415,4 +434,3 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
     );
   }
 }
-

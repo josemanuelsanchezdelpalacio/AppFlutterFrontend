@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
 class SeccionIngresosGastos extends StatelessWidget {
-  SeccionIngresosGastos({Key? key}) : super(key: key);
+  SeccionIngresosGastos({super.key});
 
   final currencyFormat = NumberFormat.currency(locale: 'es_MX', symbol: '\$');
   final dateFormat = DateFormat('dd MMM');
@@ -15,7 +15,7 @@ class SeccionIngresosGastos extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<GraficosViewModel>(context);
-    
+
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -49,15 +49,15 @@ class SeccionIngresosGastos extends StatelessWidget {
   }
 
   Widget _buildTimeSeriesChart(GraficosViewModel viewModel) {
-    // Preparar datos para el gráfico de líneas
+    //preparo los datos para el grafico de líneas
     List<TransactionData> ingresosDiarios = [];
     List<TransactionData> gastosDiarios = [];
 
-    // Agrupar transacciones por día
+    //agrupo transacciones por día
     Map<DateTime, double> mapIngresosDiarios = {};
     Map<DateTime, double> mapGastosDiarios = {};
 
-    // Normalizar fechas para que solo tenga en cuenta el día (sin horas)
+    //normalizo fechas para que solo tenga en cuenta el dia
     for (var t in viewModel.transacciones) {
       final fechaSinHora = DateTime(
         t.fechaTransaccion.year,
@@ -66,34 +66,44 @@ class SeccionIngresosGastos extends StatelessWidget {
       );
 
       if (t.tipoTransaccion == TipoTransacciones.INGRESO) {
-        mapIngresosDiarios[fechaSinHora] = 
+        mapIngresosDiarios[fechaSinHora] =
             (mapIngresosDiarios[fechaSinHora] ?? 0) + t.cantidad;
       } else {
-        mapGastosDiarios[fechaSinHora] = 
+        mapGastosDiarios[fechaSinHora] =
             (mapGastosDiarios[fechaSinHora] ?? 0) + t.cantidad;
       }
     }
 
-    // Ordenar fechas cronológicamente para el gráfico
-    final todasLasFechas = {...mapIngresosDiarios.keys, ...mapGastosDiarios.keys}.toList()
-      ..sort();
+    //ordeno fechas cronologicamente para el grafico
+    final todasLasFechas =
+        {...mapIngresosDiarios.keys, ...mapGastosDiarios.keys}.toList()..sort();
 
-    // Crear listas ordenadas para el gráfico
+    //creo las listas ordenadas para el grafico
     for (var fecha in todasLasFechas) {
-      ingresosDiarios.add(TransactionData(
-        fecha, 
-        mapIngresosDiarios[fecha] ?? 0
-      ));
-      
-      gastosDiarios.add(TransactionData(
-        fecha, 
-        mapGastosDiarios[fecha] ?? 0
-      ));
+      ingresosDiarios
+          .add(TransactionData(fecha, mapIngresosDiarios[fecha] ?? 0));
+
+      gastosDiarios.add(TransactionData(fecha, mapGastosDiarios[fecha] ?? 0));
     }
 
-    // Si no hay datos, mostrar mensaje apropiado
     if (ingresosDiarios.isEmpty && gastosDiarios.isEmpty) {
-      return _buildEmptyDataMessage('No hay datos de transacciones disponibles');
+      return _buildEmptyDataMessage(
+          'No hay datos de transacciones disponibles');
+    }
+
+    //compruebo que haya al menos dos puntos para cada serie para que se dibuje la linea
+    if (ingresosDiarios.length == 1) {
+      //añado un punto adicional si solo hay uno
+      final fecha = ingresosDiarios[0].fecha;
+      final fechaAnterior = fecha.subtract(const Duration(days: 1));
+      ingresosDiarios.insert(0, TransactionData(fechaAnterior, 0));
+    }
+
+    if (gastosDiarios.length == 1) {
+      //añado un punto adicional si solo hay uno
+      final fecha = gastosDiarios[0].fecha;
+      final fechaAnterior = fecha.subtract(const Duration(days: 1));
+      gastosDiarios.insert(0, TransactionData(fechaAnterior, 0));
     }
 
     return SfCartesianChart(
@@ -102,7 +112,8 @@ class SeccionIngresosGastos extends StatelessWidget {
       primaryXAxis: DateTimeAxis(
         dateFormat: dateFormat,
         intervalType: DateTimeIntervalType.days,
-        majorGridLines: MajorGridLines(width: 0.5, color: AppTheme.blanco.withOpacity(0.2)),
+        majorGridLines:
+            MajorGridLines(width: 0.5, color: AppTheme.blanco.withOpacity(0.2)),
         axisLine: AxisLine(width: 1, color: AppTheme.naranja),
         labelStyle: TextStyle(color: AppTheme.blanco),
       ),
@@ -110,11 +121,12 @@ class SeccionIngresosGastos extends StatelessWidget {
         numberFormat: currencyFormat,
         labelStyle: TextStyle(color: AppTheme.blanco),
         axisLine: AxisLine(width: 1, color: AppTheme.naranja),
-        majorGridLines: MajorGridLines(width: 0.5, color: AppTheme.blanco.withOpacity(0.2)),
+        majorGridLines:
+            MajorGridLines(width: 0.5, color: AppTheme.blanco.withOpacity(0.2)),
       ),
       tooltipBehavior: TooltipBehavior(
         enable: true,
-        format: 'Fecha: {point.x}\nMonto: {point.y}',
+        format: 'Fecha: {point.x}\nCantidad: {point.y}',
         header: '',
         canShowMarker: true,
       ),
@@ -126,11 +138,11 @@ class SeccionIngresosGastos extends StatelessWidget {
         iconWidth: 12,
       ),
       series: <CartesianSeries<TransactionData, DateTime>>[
-        // Línea de ingresos
+        //linea de ingresos
         LineSeries<TransactionData, DateTime>(
           dataSource: ingresosDiarios,
-          xValueMapper: (TransactionData data, _) => data.date,
-          yValueMapper: (TransactionData data, _) => data.amount,
+          xValueMapper: (TransactionData data, _) => data.fecha,
+          yValueMapper: (TransactionData data, _) => data.cantidad,
           name: 'Ingresos',
           color: Colors.green,
           width: 2.5,
@@ -141,14 +153,20 @@ class SeccionIngresosGastos extends StatelessWidget {
             shape: DataMarkerType.circle,
             color: Colors.green,
           ),
+          //configuracion para asegurar que las lineas se dibujen
+          emptyPointSettings: EmptyPointSettings(
+            mode: EmptyPointMode.zero,
+            color: Colors.green,
+          ),
+          //compruebo que siempre se dibuje la lianea entre puntos
           animationDuration: 1500,
           enableTooltip: true,
         ),
-        // Línea de gastos
+        //linea de gastos
         LineSeries<TransactionData, DateTime>(
           dataSource: gastosDiarios,
-          xValueMapper: (TransactionData data, _) => data.date,
-          yValueMapper: (TransactionData data, _) => data.amount,
+          xValueMapper: (TransactionData data, _) => data.fecha,
+          yValueMapper: (TransactionData data, _) => data.cantidad,
           name: 'Gastos',
           color: Colors.red,
           width: 2.5,
@@ -157,6 +175,10 @@ class SeccionIngresosGastos extends StatelessWidget {
             height: 6,
             width: 6,
             shape: DataMarkerType.circle,
+            color: Colors.red,
+          ),
+          emptyPointSettings: EmptyPointSettings(
+            mode: EmptyPointMode.zero,
             color: Colors.red,
           ),
           animationDuration: 1500,
@@ -198,7 +220,8 @@ class SeccionIngresosGastos extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryCard(String title, double amount, IconData icon, Color color) {
+  Widget _buildSummaryCard(
+      String title, double amount, IconData icon, Color color) {
     return Expanded(
       child: Container(
         padding: EdgeInsets.all(12),
@@ -254,7 +277,8 @@ class SeccionIngresosGastos extends StatelessWidget {
           SizedBox(height: 24),
           Text(
             'Agrega transacciones para ver su evolución en el tiempo',
-            style: TextStyle(color: AppTheme.blanco.withOpacity(0.7), fontSize: 14),
+            style: TextStyle(
+                color: AppTheme.blanco.withOpacity(0.7), fontSize: 14),
             textAlign: TextAlign.center,
           ),
         ],
@@ -263,10 +287,10 @@ class SeccionIngresosGastos extends StatelessWidget {
   }
 }
 
-// Clase para los datos del gráfico de líneas
+//clase para los datos del grafico de líneas
 class TransactionData {
-  final DateTime date;
-  final double amount;
+  final DateTime fecha;
+  final double cantidad;
 
-  TransactionData(this.date, this.amount);
+  TransactionData(this.fecha, this.cantidad);
 }

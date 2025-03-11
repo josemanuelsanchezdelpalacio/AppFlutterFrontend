@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_proyecto_app/components/componentesUI_calculos.dart';
 import 'package:flutter_proyecto_app/models/calculos_viewmodel.dart';
-import 'package:flutter_proyecto_app/screens/calculos_screen/calculos_screen.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class ROITab extends StatelessWidget {
+  const ROITab({super.key});
+
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CalculosFinancierosViewModel>(context);
     final resultadosROI = viewModel.calcularROI();
-    
+
     final roi = resultadosROI['roi'];
     final roiAnual = resultadosROI['roiAnual'];
     final gananciaTotal = resultadosROI['gananciaTotal'];
@@ -22,33 +24,31 @@ class ROITab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FinancialUIHelpers.buildSectionTitle('Cálculo de ROI'),
+          ComponentesuiCalculos.buildSeccionTitulo('Calculo de ROI'),
           const SizedBox(height: 16),
-          
-          FinancialUIHelpers.buildInputField(
-            label: 'Inversión Inicial',
+          ComponentesuiCalculos.buildCampos(
+            label: 'Inversion inicial',
             initialValue: viewModel.inversionInicial.toString(),
             onChanged: (value) {
-              viewModel.setInversionInicial(double.tryParse(value) ?? viewModel.inversionInicial);
+              viewModel.setInversionInicial(
+                  double.tryParse(value) ?? viewModel.inversionInicial);
             },
             prefixIcon: Icons.attach_money,
           ),
-          
           const SizedBox(height: 12),
-          
-          FinancialUIHelpers.buildInputField(
-            label: 'Retorno Esperado',
+          ComponentesuiCalculos.buildCampos(
+            label: 'Retorno esperado',
             initialValue: viewModel.retornoEsperado.toString(),
             onChanged: (value) {
-              viewModel.setRetornoEsperado(double.tryParse(value) ?? viewModel.retornoEsperado);
+              viewModel.setRetornoEsperado(
+                  double.tryParse(value) ?? viewModel.retornoEsperado);
             },
             prefixIcon: Icons.trending_up,
           ),
-          
           const SizedBox(height: 12),
-          
-          FinancialUIHelpers.buildSliderField(
-            label: 'Período de Inversión (meses): ${viewModel.periodoInversion}',
+          ComponentesuiCalculos.buildCampoDeslizante(
+            label:
+                'Periodo de inversion (meses): ${viewModel.periodoInversion}',
             value: viewModel.periodoInversion.toDouble(),
             min: 1,
             max: 60,
@@ -56,9 +56,7 @@ class ROITab extends StatelessWidget {
               viewModel.setPeriodoInversion(value.toInt());
             },
           ),
-          
           const SizedBox(height: 24),
-          
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -77,37 +75,29 @@ class ROITab extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 16),
-                
-                FinancialUIHelpers.buildResultItem(
+                ComponentesuiCalculos.buildItemResultados(
                   label: 'ROI Anualizado',
                   value: '${roiAnual.toStringAsFixed(2)}%',
                   color: roiAnual >= 0 ? Colors.green : Colors.red,
                 ),
-                
                 const SizedBox(height: 8),
-                
-                FinancialUIHelpers.buildResultItem(
-                  label: 'Ganancia Total',
+                ComponentesuiCalculos.buildItemResultados(
+                  label: 'Ganancia total',
                   value: '\$${gananciaTotal.toStringAsFixed(2)}',
                   color: gananciaTotal >= 0 ? Colors.green : Colors.red,
                 ),
-                
                 const SizedBox(height: 8),
-                
-                FinancialUIHelpers.buildResultItem(
-                  label: 'Ganancia Mensual Promedio',
+                ComponentesuiCalculos.buildItemResultados(
+                  label: 'Ganancia mensual promedio',
                   value: '\$${gananciaMensual.toStringAsFixed(2)}',
                   color: gananciaMensual >= 0 ? Colors.green : Colors.red,
                 ),
               ],
             ),
           ),
-          
           const SizedBox(height: 24),
-          
-          FinancialUIHelpers.buildSectionTitle('Recomendaciones'),
+          ComponentesuiCalculos.buildSeccionTitulo('Recomendaciones'),
           const SizedBox(height: 12),
-          
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -120,12 +110,12 @@ class ROITab extends StatelessWidget {
                 Text(
                   recomendacion,
                   style: TextStyle(
-                    color: roi > 15 
-                        ? Colors.green 
-                        : roi > 5 
-                            ? AppTheme.naranja 
-                            : roi > 0 
-                                ? Colors.amber 
+                    color: roi > 15
+                        ? Colors.green
+                        : roi > 5
+                            ? AppTheme.naranja
+                            : roi > 0
+                                ? Colors.amber
                                 : Colors.red,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
@@ -133,7 +123,7 @@ class ROITab extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Si inviertes la misma cantidad mensualmente, en 1 año tendrías aproximadamente \$${proyeccionAnual.toStringAsFixed(2)}',
+                  'Si inviertes la misma cantidad mensualmente en 1 año tendrias aproximadamente \$${proyeccionAnual.toStringAsFixed(2)}',
                   style: const TextStyle(
                     color: AppTheme.blanco,
                     fontSize: 14,

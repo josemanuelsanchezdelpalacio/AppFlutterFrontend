@@ -5,14 +5,14 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 class SeccionResumen extends StatelessWidget {
-  SeccionResumen({Key? key}) : super(key: key);
+  SeccionResumen({super.key});
 
   final currencyFormat = NumberFormat.currency(locale: 'es_MX', symbol: '\$');
 
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<GraficosViewModel>(context);
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -20,17 +20,23 @@ class SeccionResumen extends StatelessWidget {
         children: [
           _buildSummaryHeader(viewModel),
           const SizedBox(height: 20),
-          _buildSummaryItem('Ingresos Totales', viewModel.ingresosTotales, Colors.green, Icons.arrow_upward),
+          _buildSummaryItem('Ingresos Totales', viewModel.ingresosTotales,
+              Colors.green, Icons.arrow_upward),
           const SizedBox(height: 12),
-          _buildSummaryItem('Gastos Totales', viewModel.gastosTotales, Colors.red, Icons.arrow_downward),
+          _buildSummaryItem('Gastos Totales', viewModel.gastosTotales,
+              Colors.red, Icons.arrow_downward),
           const SizedBox(height: 12),
-          _buildSummaryItem('Ahorros Totales', viewModel.ahorroTotal, Colors.blue, Icons.savings),
+          _buildSummaryItem('Ahorros Totales', viewModel.ahorroTotal,
+              Colors.blue, Icons.savings),
           const SizedBox(height: 12),
-          _buildProgressItem('Utilización del Presupuesto', viewModel.utilizacionPresupuesto, Colors.orange),
+          _buildProgressItem('Utilización del Presupuesto',
+              viewModel.utilizacionPresupuesto, Colors.orange),
           const SizedBox(height: 12),
-          _buildProgressItem('Porcentaje de Ahorro', viewModel.porcentajeAhorro, Colors.blue),
+          _buildProgressItem(
+              'Porcentaje de Ahorro', viewModel.porcentajeAhorro, Colors.blue),
           const SizedBox(height: 12),
-          _buildProgressItem('Porcentaje de Gastos', viewModel.porcentajeGastos, Colors.red),
+          _buildProgressItem(
+              'Porcentaje de Gastos', viewModel.porcentajeGastos, Colors.red),
         ],
       ),
     );
@@ -39,13 +45,16 @@ class SeccionResumen extends StatelessWidget {
   Widget _buildSummaryHeader(GraficosViewModel viewModel) {
     final netBalance = viewModel.ingresosTotales - viewModel.gastosTotales;
     final isPositive = netBalance >= 0;
-    
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isPositive ? Colors.green.withOpacity(0.2) : Colors.red.withOpacity(0.2),
+        color: isPositive
+            ? Colors.green.withOpacity(0.2)
+            : Colors.red.withOpacity(0.2),
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: isPositive ? Colors.green : Colors.red, width: 2),
+        border:
+            Border.all(color: isPositive ? Colors.green : Colors.red, width: 2),
       ),
       child: Column(
         children: [
@@ -59,7 +68,7 @@ class SeccionResumen extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Text(
-                'Balance Total',
+                'Balance total',
                 style: TextStyle(
                   color: AppTheme.blanco,
                   fontSize: 18,
@@ -135,7 +144,8 @@ class SeccionResumen extends StatelessWidget {
     );
   }
 
-  Widget _buildSummaryItem(String title, double value, Color color, IconData icon) {
+  Widget _buildSummaryItem(
+      String title, double value, Color color, IconData icon) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
@@ -175,3 +185,4 @@ class SeccionResumen extends StatelessWidget {
     );
   }
 }
+

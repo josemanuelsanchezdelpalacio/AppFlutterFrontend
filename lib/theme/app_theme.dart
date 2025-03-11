@@ -7,7 +7,8 @@ class AppTheme {
   static const Color blanco = Color(0xFFFFFFFF);
   static const Color gris = Color(0xFF2A2A2A);
   
-  static const String rutaLogo = 'assets/imagen_logo.png';
+  // Actualizada para coincidir con la ruta usada en LoginScreen
+  static const String rutaLogo = 'lib/assets/imagen_logo.png';
   
   static ThemeData obtenerTema() {
     return ThemeData(
@@ -61,3 +62,4 @@ class AppTheme {
     );
   }
 }
+

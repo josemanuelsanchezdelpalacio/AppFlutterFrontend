@@ -13,9 +13,9 @@ class TransaccionesScreen extends StatefulWidget {
   final int idUsuario;
 
   const TransaccionesScreen({
-    Key? key,
+    super.key,
     required this.idUsuario,
-  }) : super(key: key);
+  });
 
   @override
   State<TransaccionesScreen> createState() => _TransaccionesScreenState();
@@ -23,20 +23,25 @@ class TransaccionesScreen extends StatefulWidget {
 
 class _TransaccionesScreenState extends State<TransaccionesScreen> {
   late TransaccionesViewmodel _viewmodel;
-  String _filtroActual = 'Todos';
-  final List<String> _opcionesFiltro = [
-    'Todos',
-    'Ingresos',
-    'Gastos',
-    'Recientes',
-    'Antiguas',
-  ];
+  final TextEditingController _searchController = TextEditingController();
+  bool _isSearching = false;
 
   @override
   void initState() {
     super.initState();
     _viewmodel = TransaccionesViewmodel(idUsuario: widget.idUsuario);
     _cargarTransacciones();
+
+    // Añadir listener para búsqueda
+    _searchController.addListener(() {
+      _viewmodel.aplicarBusqueda(_searchController.text);
+    });
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _cargarTransacciones() async {
@@ -51,15 +56,6 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
     }
   }
 
-  void _aplicarFiltro(String? filtro) {
-    if (filtro != null) {
-      setState(() {
-        _filtroActual = filtro;
-      });
-      // Implementar la lógica de filtrado aquí o en el ViewModel
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
@@ -69,40 +65,56 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
           return Scaffold(
             backgroundColor: AppTheme.colorFondo,
             appBar: AppBar(
-              title: !viewmodel.modoSeleccion
-                  ? const Text(
-                      'Transacciones',
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    )
-                  : Text(
-                      '${viewmodel.transaccionesSeleccionadas.length} seleccionadas',
-                      style: const TextStyle(fontWeight: FontWeight.bold),
-                    ),
-              leading: viewmodel.modoSeleccion
+              title: _isSearching
+                  ? _buildSearchField()
+                  : !viewmodel.modoSeleccion
+                      ? const Text(
+                          'Transacciones',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        )
+                      : Text(
+                          '${viewmodel.transaccionesSeleccionadas.length} seleccionadas',
+                          style: const TextStyle(fontWeight: FontWeight.bold),
+                        ),
+              leading: _isSearching
                   ? IconButton(
-                      icon: const Icon(Icons.close),
-                      onPressed: () => viewmodel.toggleModoSeleccion(),
+                      icon: const Icon(Icons.arrow_back),
+                      onPressed: _toggleSearch,
                     )
-                  : null,
+                  : viewmodel.modoSeleccion
+                      ? IconButton(
+                          icon: const Icon(Icons.close),
+                          onPressed: () => viewmodel.toggleModoSeleccion(),
+                        )
+                      : null,
               actions: [
+                if (!_isSearching && !viewmodel.modoSeleccion)
+                  IconButton(
+                    icon: const Icon(Icons.search),
+                    onPressed: _toggleSearch,
+                  ),
                 viewmodel.modoSeleccion
                     ? Row(
                         children: [
                           IconButton(
                             icon: const Icon(Icons.delete),
-                            onPressed: viewmodel.transaccionesSeleccionadas.isEmpty
+                            onPressed: viewmodel
+                                    .transaccionesSeleccionadas.isEmpty
                                 ? null
-                                : () => _confirmarEliminarSeleccionadas(context),
+                                : () =>
+                                    _confirmarEliminarSeleccionadas(context),
                           ),
                         ],
                       )
-                    : IconButton(
-                        icon: const Icon(Icons.select_all),
-                        onPressed: () => viewmodel.toggleModoSeleccion(),
-                      ),
+                    : !_isSearching
+                        ? IconButton(
+                            icon: const Icon(Icons.select_all),
+                            onPressed: () => viewmodel.toggleModoSeleccion(),
+                          )
+                        : const SizedBox(),
               ],
             ),
-            drawer: !viewmodel.modoSeleccion 
+            drawer: !viewmodel.modoSeleccion && !_isSearching
                 ? MenuDesplegable(idUsuario: widget.idUsuario)
                 : null,
             body: RefreshIndicator(
@@ -110,22 +122,55 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
               color: AppTheme.naranja,
               child: Column(
                 children: [
-                  // Utilizando el componente FilterBar
-                  if (!viewmodel.modoSeleccion)
+                  //uso el componente del filtro
+                  if (!viewmodel.modoSeleccion && !_isSearching)
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                      child: FilterBar(
-                        filtroActual: _filtroActual,
-                        onFilterChanged: _aplicarFiltro,
-                        filtros: _opcionesFiltro,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      child: FiltroElementos(
+                        filtroActual: viewmodel.filtroActual,
+                        onFilterChanged: viewmodel.aplicarFiltro,
+                        filtros: viewmodel.opcionesFiltro,
+                        fechaFiltro: viewmodel.fechaFiltro,
+                        onFechaChanged: viewmodel.aplicarFiltroFecha,
+                        mesFiltro: viewmodel.mesFiltro,
+                        onMesChanged: viewmodel.aplicarFiltroMes,
+                        mesesDisponibles: viewmodel.mesesDisponibles,
                       ),
                     ),
 
-                  // Tarjeta de balance (solo visible cuando no está en modo selección)
-                  if (!viewmodel.modoSeleccion) _buildBalanceCard(),
+                  //tarjeta de balance
+                  if (!viewmodel.modoSeleccion && !_isSearching)
+                    _buildBalanceCard(),
 
-                  // Título de transacciones recientes (solo visible cuando no está en modo selección)
-                  if (!viewmodel.modoSeleccion)
+                  // Texto de información de búsqueda si está buscando
+                  if (_isSearching && _searchController.text.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              'Resultados para "${_searchController.text}"',
+                              style: const TextStyle(
+                                color: AppTheme.blanco,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ),
+                          Text(
+                            '${viewmodel.transaccionesFiltradas.length} resultado${viewmodel.transaccionesFiltradas.length != 1 ? 's' : ''}',
+                            style: const TextStyle(
+                              color: Colors.grey,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                  //titulo de transacciones recientes
+                  if (!viewmodel.modoSeleccion && !_isSearching)
                     const Padding(
                       padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                       child: Align(
@@ -141,7 +186,7 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                       ),
                     ),
 
-                  // Lista de transacciones
+                  //lista de transacciones
                   _buildTransaccionesList(),
                 ],
               ),
@@ -153,7 +198,8 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                     onPressed: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => AddTransactionScreen(idUsuario: widget.idUsuario),
+                        builder: (_) =>
+                            AddTransaccionesScreen(idUsuario: widget.idUsuario),
                       ),
                     ).then((_) => _cargarTransacciones()),
                   )
@@ -164,6 +210,40 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
             ),
           );
         },
+      ),
+    );
+  }
+
+  // Método para alternar el modo de búsqueda
+  void _toggleSearch() {
+    setState(() {
+      _isSearching = !_isSearching;
+      if (!_isSearching) {
+        _searchController.clear();
+        _viewmodel.aplicarBusqueda('');
+      }
+    });
+  }
+
+  // Campo de búsqueda
+  Widget _buildSearchField() {
+    return TextField(
+      controller: _searchController,
+      autofocus: true,
+      style: const TextStyle(color: AppTheme.blanco),
+      decoration: InputDecoration(
+        hintText: 'Buscar transacciones...',
+        hintStyle: TextStyle(color: Colors.grey[400]),
+        border: InputBorder.none,
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+        suffixIcon: _searchController.text.isNotEmpty
+            ? IconButton(
+                icon: const Icon(Icons.clear, color: Colors.grey),
+                onPressed: () {
+                  _searchController.clear();
+                },
+              )
+            : null,
       ),
     );
   }
@@ -179,7 +259,7 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
           ),
           child: Column(
             children: [
-              // Balance total
+              //balance total
               Padding(
                 padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Row(
@@ -193,7 +273,8 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                         fontSize: 16,
                       ),
                     ),
-                    Icon(Icons.content_copy, color: Colors.black.withOpacity(0.7)),
+                    Icon(Icons.content_copy,
+                        color: Colors.black.withOpacity(0.7)),
                   ],
                 ),
               ),
@@ -211,14 +292,14 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                   ),
                 ),
               ),
-              // Detalle ingresos/gastos
+
+              //ingresos
               Container(
                 height: 1,
                 color: Colors.black.withOpacity(0.2),
               ),
               Row(
                 children: [
-                  // Ingresos
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(12),
@@ -227,7 +308,8 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                         children: [
                           Row(
                             children: const [
-                              Icon(Icons.arrow_downward, color: Colors.green, size: 16),
+                              Icon(Icons.arrow_downward,
+                                  color: Colors.green, size: 16),
                               SizedBox(width: 4),
                               Text(
                                 'Ingresos',
@@ -248,13 +330,13 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                       ),
                     ),
                   ),
-                  // Línea vertical
+
+                  //gastos
                   Container(
                     width: 1,
                     height: 50,
                     color: Colors.black.withOpacity(0.2),
                   ),
-                  // Gastos
                   Expanded(
                     child: Padding(
                       padding: const EdgeInsets.all(12),
@@ -263,7 +345,8 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                         children: [
                           Row(
                             children: const [
-                              Icon(Icons.arrow_upward, color: Colors.red, size: 16),
+                              Icon(Icons.arrow_upward,
+                                  color: Colors.red, size: 16),
                               SizedBox(width: 4),
                               Text(
                                 'Gastos',
@@ -304,13 +387,15 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
           );
         }
 
-        if (viewmodel.transacciones.isEmpty) {
-          return const Expanded(
+        if (viewmodel.transaccionesFiltradas.isEmpty) {
+          return Expanded(
             child: Center(
               child: Text(
-                'No hay transacciones. \n¡Agrega una nueva para comenzar!',
+                _isSearching && _searchController.text.isNotEmpty
+                    ? 'No se encontraron resultados para "${_searchController.text}"'
+                    : 'No hay transacciones. \nAñade una nueva transaccion para comenzar',
                 textAlign: TextAlign.center,
-                style: TextStyle(color: Colors.grey),
+                style: const TextStyle(color: Colors.grey),
               ),
             ),
           );
@@ -318,10 +403,10 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
 
         return Expanded(
           child: ListView.builder(
-            itemCount: viewmodel.transacciones.length,
+            itemCount: viewmodel.transaccionesFiltradas.length,
             padding: const EdgeInsets.symmetric(horizontal: 16),
             itemBuilder: (context, index) {
-              final transaccion = viewmodel.transacciones[index];
+              final transaccion = viewmodel.transaccionesFiltradas[index];
               return _buildTransaccionItem(context, transaccion, viewmodel);
             },
           ),
@@ -330,13 +415,11 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
     );
   }
 
-  Widget _buildTransaccionItem(
-    BuildContext context, 
-    Transaccion transaccion,
-    TransaccionesViewmodel viewmodel
-  ) {
-    final bool esIngreso = transaccion.tipoTransaccion == TipoTransacciones.INGRESO;
-    final Color colorMonto = esIngreso ? Colors.green : Colors.red;
+  Widget _buildTransaccionItem(BuildContext context, Transaccion transaccion,
+      TransaccionesViewmodel viewmodel) {
+    final bool esIngreso =
+        transaccion.tipoTransaccion == TipoTransacciones.INGRESO;
+    final Color colorCantidad = esIngreso ? Colors.green : Colors.red;
     final String signo = esIngreso ? '+ ' : '- ';
 
     return Padding(
@@ -363,19 +446,21 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [
-                // Checkbox selección (visible solo en modo selección)
+                //checkbox seleccion tipo transaccion
                 if (viewmodel.modoSeleccion)
                   Padding(
                     padding: const EdgeInsets.only(right: 8),
                     child: Checkbox(
-                      value: viewmodel.isTransaccionSeleccionada(transaccion.id),
-                      onChanged: (_) => viewmodel.toggleSeleccionTransaccion(transaccion.id),
+                      value:
+                          viewmodel.isTransaccionSeleccionada(transaccion.id),
+                      onChanged: (_) =>
+                          viewmodel.toggleSeleccionTransaccion(transaccion.id),
                       activeColor: AppTheme.naranja,
                       checkColor: Colors.black,
                     ),
                   ),
 
-                // Icono de categoría
+                //campo de categoria
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
@@ -388,7 +473,7 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                   ),
                 ),
 
-                // Información de la transacción
+                //informacion de la transaccion
                 Expanded(
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -420,10 +505,12 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                               ),
                             ),
                             const SizedBox(width: 8),
-                            Icon(Icons.circle, size: 4, color: Colors.grey[400]),
+                            Icon(Icons.circle,
+                                size: 4, color: Colors.grey[400]),
                             const SizedBox(width: 8),
                             Text(
-                              DateFormat('dd/MM/yyyy').format(transaccion.fechaTransaccion),
+                              DateFormat('dd/MM/yyyy')
+                                  .format(transaccion.fechaTransaccion),
                               style: TextStyle(
                                 color: Colors.grey[400],
                                 fontSize: 13,
@@ -436,17 +523,16 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                   ),
                 ),
 
-                // Monto
+                //cantidad
                 Text(
                   signo + viewmodel.formatoMoneda(transaccion.cantidad),
                   style: TextStyle(
-                    color: colorMonto,
+                    color: colorCantidad,
                     fontWeight: FontWeight.bold,
                     fontSize: 16,
                   ),
                 ),
 
-                // Icono de flecha (solo visible cuando no está en modo selección)
                 if (!viewmodel.modoSeleccion) ...[
                   const SizedBox(width: 8),
                   const Icon(
@@ -462,7 +548,8 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
     );
   }
 
-  void _mostrarOpcionesTransaccion(BuildContext context, Transaccion transaccion) {
+  void _mostrarOpcionesTransaccion(
+      BuildContext context, Transaccion transaccion) {
     showModalBottomSheet(
       context: context,
       backgroundColor: AppTheme.gris,
@@ -484,11 +571,11 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
             ),
             const SizedBox(height: 20),
 
-            // Botón Editar
+            //boton editar
             ListTile(
               leading: const Icon(Icons.edit, color: AppTheme.naranja),
               title: const Text(
-                'Editar transacción',
+                'Editar transaccion',
                 style: TextStyle(color: AppTheme.blanco),
               ),
               onTap: () {
@@ -496,7 +583,7 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => AddTransactionScreen(
+                    builder: (_) => AddTransaccionesScreen(
                       idUsuario: widget.idUsuario,
                       transaccionEditar: transaccion,
                     ),
@@ -505,7 +592,7 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
               },
             ),
 
-            // Botón Eliminar
+            //boton eliminar
             ListTile(
               leading: const Icon(Icons.delete, color: Colors.red),
               title: const Text(
@@ -523,23 +610,25 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
     );
   }
 
-  Future<void> _confirmarEliminarTransaccion(BuildContext context, int id) async {
+  Future<void> _confirmarEliminarTransaccion(
+      BuildContext context, int id) async {
     final confirmacion = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.gris,
         title: const Text(
-          '¿Eliminar transacción?',
+          '¿Eliminar transaccion?',
           style: TextStyle(color: AppTheme.blanco),
         ),
         content: const Text(
-          'Esta acción no se puede deshacer.',
+          'Esta accion no se puede deshacer.',
           style: TextStyle(color: AppTheme.blanco),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancelar', style: TextStyle(color: AppTheme.blanco)),
+            child: const Text('Cancelar',
+                style: TextStyle(color: AppTheme.blanco)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context, true),
@@ -568,7 +657,8 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
   }
 
   Future<void> _confirmarEliminarSeleccionadas(BuildContext context) async {
-    final viewmodel = Provider.of<TransaccionesViewmodel>(context, listen: false);
+    final viewmodel =
+        Provider.of<TransaccionesViewmodel>(context, listen: false);
 
     final confirmacion = await showDialog<bool>(
       context: context,
@@ -579,13 +669,14 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
           style: TextStyle(color: AppTheme.blanco),
         ),
         content: Text(
-          'Se eliminarán ${viewmodel.transaccionesSeleccionadas.length} transacciones. Esta acción no se puede deshacer.',
+          'Se eliminaran ${viewmodel.transaccionesSeleccionadas.length} transacciones. Esta acción no se puede deshacer.',
           style: const TextStyle(color: AppTheme.blanco),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancelar', style: TextStyle(color: AppTheme.blanco)),
+            child: const Text('Cancelar',
+                style: TextStyle(color: AppTheme.blanco)),
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
@@ -603,7 +694,7 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
             const SnackBar(content: Text('Transacciones eliminadas')),
           );
         }
-        // Desactivar modo selección después de eliminar
+        //desactivo el modo de seleccion despues de eliminar
         viewmodel.toggleModoSeleccion();
       } catch (e) {
         if (mounted) {
@@ -615,4 +706,3 @@ class _TransaccionesScreenState extends State<TransaccionesScreen> {
     }
   }
 }
-

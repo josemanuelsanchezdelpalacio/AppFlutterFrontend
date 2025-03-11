@@ -10,9 +10,12 @@ class AddMetasAhorroViewModel {
   //controladores para los campos
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController categoriaController = TextEditingController();
-  final TextEditingController categoriaPersonalizadaController = TextEditingController();
-  final TextEditingController cantidadObjetivoController = TextEditingController();
-  final TextEditingController cantidadActualController = TextEditingController();
+  final TextEditingController categoriaPersonalizadaController =
+      TextEditingController();
+  final TextEditingController cantidadObjetivoController =
+      TextEditingController();
+  final TextEditingController cantidadActualController =
+      TextEditingController();
 
   DateTime _fechaObjetivo = DateTime.now().add(const Duration(days: 30));
   bool _isLoading = false;
@@ -30,6 +33,7 @@ class AddMetasAhorroViewModel {
     'Reembolso',
     'Venta',
     'Otros',
+    'Personalizada',
   ];
 
   AddMetasAhorroViewModel({
@@ -39,25 +43,23 @@ class AddMetasAhorroViewModel {
     _inicializar();
   }
 
-  // Getters
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   bool get isEditing => _isEditing;
   DateTime get fechaObjetivo => _fechaObjetivo;
   bool get isCustomCategory => _isCustomCategory;
-  List<String> get categorias => [
-        ...categoriasPredefinidas,
-        if (_isCustomCategory) 'Personalizada'
-      ];
+  List<String> get categorias => categoriasPredefinidas;
 
   void _inicializar() {
     if (metaAhorroParaEditar != null) {
       _isEditing = true;
       _metaId = metaAhorroParaEditar!.id;
       nombreController.text = metaAhorroParaEditar!.nombre;
-      
+
       //determino si es una categoria personalizada
-      if (!categoriasPredefinidas.contains(metaAhorroParaEditar!.categoria)) {
+      if (!categoriasPredefinidas
+          .sublist(0, categoriasPredefinidas.length - 1)
+          .contains(metaAhorroParaEditar!.categoria)) {
         _isCustomCategory = true;
         categoriaPersonalizadaController.text = metaAhorroParaEditar!.categoria;
         categoriaController.text = 'Personalizada';
@@ -65,12 +67,14 @@ class AddMetasAhorroViewModel {
         categoriaController.text = metaAhorroParaEditar!.categoria;
       }
 
-      cantidadObjetivoController.text = metaAhorroParaEditar!.cantidadObjetivo.toString();
-      cantidadActualController.text = metaAhorroParaEditar!.cantidadActual.toString();
+      cantidadObjetivoController.text =
+          metaAhorroParaEditar!.cantidadObjetivo.toString();
+      cantidadActualController.text =
+          metaAhorroParaEditar!.cantidadActual.toString();
       _fechaObjetivo = metaAhorroParaEditar!.fechaObjetivo;
     } else {
-      //inicializo para una nueva meta
-      nombreController.text = categoriasPredefinidas.first;
+      //inicializo para una nueva meta con valores por defecto
+      nombreController.text = '';
       categoriaController.text = categoriasPredefinidas.first;
       cantidadActualController.text = '0.0';
     }
@@ -87,17 +91,11 @@ class AddMetasAhorroViewModel {
 
   void toggleCustomCategory(bool value) {
     _isCustomCategory = value;
-    if (value) {
-      categoriaController.text = 'Personalizada';
-    } else {
-      categoriaController.text = categoriasPredefinidas.first;
-      categoriaPersonalizadaController.clear();
-    }
   }
 
-  //reseto el formulario para nueva entrada
+  //reseteo el formulario para nueva entrada
   void resetForm() {
-    nombreController.text = categoriasPredefinidas.first;
+    nombreController.text = '';
     categoriaController.text = categoriasPredefinidas.first;
     categoriaPersonalizadaController.clear();
     cantidadObjetivoController.clear();
@@ -107,47 +105,54 @@ class AddMetasAhorroViewModel {
     _isCustomCategory = false;
   }
 
-  // Lógica de negocio
+  //metodo para guardar la meta de ahorro
   Future<String> guardarMetaAhorro() async {
     _errorMessage = null;
-    
+
     try {
-      // Determinar la categoría final
-      final categoria = _isCustomCategory && categoriaPersonalizadaController.text.isNotEmpty
-          ? categoriaPersonalizadaController.text.trim()
-          : categoriaController.text.trim();
+      //validacion del nombre
+      if (nombreController.text.trim().isEmpty) {
+        throw Exception('El nombre de la meta no puede estar vacío');
+      }
+
+      //determino la categoria final
+      final categoria =
+          _isCustomCategory && categoriaPersonalizadaController.text.isNotEmpty
+              ? categoriaPersonalizadaController.text.trim()
+              : categoriaController.text.trim();
 
       final metaAhorro = MetaAhorro(
         id: _isEditing ? _metaId : null,
         nombre: nombreController.text.trim(),
         categoria: categoria,
-        cantidadObjetivo: double.parse(cantidadObjetivoController.text),
-        cantidadActual: double.parse(cantidadActualController.text),
+        cantidadObjetivo:
+            double.parse(cantidadObjetivoController.text.replaceAll(',', '.')),
+        cantidadActual:
+            double.parse(cantidadActualController.text.replaceAll(',', '.')),
         fechaObjetivo: _fechaObjetivo,
-        completada: double.parse(cantidadActualController.text) >=
-            double.parse(cantidadObjetivoController.text),
+        completada: double.parse(
+                cantidadActualController.text.replaceAll(',', '.')) >=
+            double.parse(cantidadObjetivoController.text.replaceAll(',', '.')),
       );
 
       if (_isEditing) {
-        // Actualizar meta existente
+        //actualizo la meta existente
         await _metasAhorroService.actualizarMetaAhorro(
-          idUsuario,
-          metaAhorro.id!,
-          metaAhorro
-        );
-        return 'Meta de ahorro actualizada con éxito';
+            idUsuario, metaAhorro.id!, metaAhorro);
+        return 'Meta de ahorro actualizada correctamente';
       } else {
-        // Crear nueva meta
+        //creo una nueva meta
         await _metasAhorroService.crearMetaAhorro(idUsuario, metaAhorro);
-        return 'Meta de ahorro creada con éxito';
+        return 'Meta de ahorro creada correctamente';
       }
     } catch (e) {
-      _errorMessage = 'Error al ${_isEditing ? "actualizar" : "crear"} la meta de ahorro: $e';
+      _errorMessage =
+          'Error al ${_isEditing ? "actualizar" : "crear"} la meta de ahorro: $e';
       throw Exception(_errorMessage);
     }
   }
 
-  // Liberar recursos
+  //libero recursos
   void dispose() {
     nombreController.dispose();
     categoriaController.dispose();

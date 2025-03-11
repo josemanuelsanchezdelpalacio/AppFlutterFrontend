@@ -2,31 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:flutter_proyecto_app/components/custom_bottom_app_bar.dart';
 import 'package:flutter_proyecto_app/models/graficos_viewmodel.dart';
 import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
-import 'package:flutter_proyecto_app/screens/graficos_screen/graficos_ahorros.dart';
-import 'package:flutter_proyecto_app/screens/graficos_screen/graficos_ingresos_gastos.dart';
-import 'package:flutter_proyecto_app/screens/graficos_screen/graficos_presupuesto.dart';
-import 'package:flutter_proyecto_app/screens/graficos_screen/graficos_resumen.dart';
+import 'package:flutter_proyecto_app/screens/graficos_screens/graficos_ahorros.dart';
+import 'package:flutter_proyecto_app/screens/graficos_screens/graficos_ingresos_gastos.dart';
+import 'package:flutter_proyecto_app/screens/graficos_screens/graficos_presupuesto.dart';
+import 'package:flutter_proyecto_app/screens/graficos_screens/graficos_resumen.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class ChartData {
-  final String category;
-  final double amount;
+  final String categoria;
+  final double cantidad;
   final Color color;
 
-  ChartData(this.category, this.amount, [this.color = Colors.blue]);
+  ChartData(this.categoria, this.cantidad, [this.color = Colors.blue]);
 }
 
 class GraficosScreen extends StatefulWidget {
   final int idUsuario;
 
-  const GraficosScreen({Key? key, required this.idUsuario}) : super(key: key);
+  const GraficosScreen({super.key, required this.idUsuario});
 
   @override
   State<GraficosScreen> createState() => _GraficosScreenState();
 }
 
-class _GraficosScreenState extends State<GraficosScreen> with SingleTickerProviderStateMixin {
+class _GraficosScreenState extends State<GraficosScreen>
+    with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
   @override
@@ -194,7 +195,8 @@ class _GraficosScreenState extends State<GraficosScreen> with SingleTickerProvid
             );
           },
         ),
-        bottomNavigationBar: CustomBottomNavBar(idUsuario: widget.idUsuario, currentIndex: 0),
+        bottomNavigationBar:
+            CustomBottomNavBar(idUsuario: widget.idUsuario, currentIndex: 0),
       ),
     );
   }
@@ -230,18 +232,18 @@ class GraficosUIHelpers {
     );
   }
 
-  static Widget buildCardContainer({required Widget child, Color? borderColor}) {
+  static Widget buildCardContainer(
+      {required Widget child, Color? borderColor}) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
         color: AppTheme.gris.withOpacity(0.3),
         borderRadius: BorderRadius.circular(12),
-        border: borderColor != null 
-            ? Border.all(color: borderColor, width: 2) 
+        border: borderColor != null
+            ? Border.all(color: borderColor, width: 2)
             : null,
       ),
       child: child,
     );
   }
 }
-

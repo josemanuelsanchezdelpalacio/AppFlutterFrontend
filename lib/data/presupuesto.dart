@@ -1,6 +1,6 @@
 class Presupuesto {
   final int? id;
-  final String? nombre; // Made nullable
+  final String? nombre;
   final String categoria;
   final double cantidad;
   final DateTime fechaInicio;
@@ -17,19 +17,15 @@ class Presupuesto {
     required this.fechaFin,
     double? cantidadGastada,
     double? cantidadRestante,
-  }) : 
-    cantidadGastada = cantidadGastada ?? 0.0,
-    cantidadRestante = cantidadRestante ?? (cantidadGastada != null 
-      ? cantidad - cantidadGastada 
-      : cantidad);
+  })  : cantidadGastada = cantidadGastada ?? 0.0,
+        cantidadRestante = cantidadRestante ??
+            (cantidadGastada != null ? cantidad - cantidadGastada : cantidad);
 
   factory Presupuesto.fromJson(Map<String, dynamic> json) {
     // Parse dates safely
     DateTime parseDate(dynamic dateStr) {
       try {
-        return dateStr is String 
-          ? DateTime.parse(dateStr) 
-          : DateTime.now();
+        return dateStr is String ? DateTime.parse(dateStr) : DateTime.now();
       } catch (e) {
         return DateTime.now();
       }
@@ -38,9 +34,7 @@ class Presupuesto {
     // Safely convert to double with default
     double safeDouble(dynamic value, [double defaultValue = 0.0]) {
       if (value == null) return defaultValue;
-      return (value is num) 
-        ? value.toDouble() 
-        : defaultValue;
+      return (value is num) ? value.toDouble() : defaultValue;
     }
 
     double cantidad = safeDouble(json['cantidad']);
@@ -71,8 +65,8 @@ class Presupuesto {
     };
   }
 
-  // New method to update budget with a transaction
-  Presupuesto updateWithTransaction(double transactionAmount) {
+  //metodo para actualizar un presupueso con una transaccion
+  Presupuesto actualizarConTransaccion(double transactionAmount) {
     double newCantidadGastada = cantidadGastada + transactionAmount;
     double newCantidadRestante = cantidad - newCantidadGastada;
 
@@ -88,10 +82,9 @@ class Presupuesto {
     );
   }
 
-  // Method to check if a transaction applies to this budget
+  //metodo para comprobar si una transaccion applies se aplica a este presupuesto
   bool isTransactionApplicable(DateTime transactionDate) {
-    return !transactionDate.isBefore(fechaInicio) && 
-           !transactionDate.isAfter(fechaFin);
+    return !transactionDate.isBefore(fechaInicio) &&
+        !transactionDate.isAfter(fechaFin);
   }
 }
-

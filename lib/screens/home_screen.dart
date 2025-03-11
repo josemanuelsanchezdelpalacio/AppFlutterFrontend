@@ -5,7 +5,7 @@ import 'package:flutter_proyecto_app/data/metas_ahorro.dart';
 import 'package:flutter_proyecto_app/data/presupuesto.dart';
 import 'package:flutter_proyecto_app/data/transaccion.dart';
 import 'package:flutter_proyecto_app/models/home_viewmodel.dart';
-import 'package:flutter_proyecto_app/screens/login_screen.dart';
+import 'package:flutter_proyecto_app/screens/auth_screens/login_screen.dart';
 import 'package:flutter_proyecto_app/services/auth_service.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:intl/intl.dart';
@@ -14,7 +14,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 class HomeScreen extends StatefulWidget {
   final int idUsuario;
 
-  const HomeScreen({Key? key, required this.idUsuario}) : super(key: key);
+  const HomeScreen({super.key, required this.idUsuario});
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -23,7 +23,7 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   late HomeViewModel _viewModel;
   final AuthService _authService = AuthService();
-  
+
   @override
   void initState() {
     super.initState();
@@ -43,6 +43,61 @@ class _HomeScreenState extends State<HomeScreen> {
     if (mounted) {
       setState(() {});
     }
+  }
+
+  //mostrar dialogo de confirmacion para cerrar sesion
+  Future<void> _mostrarDialogoConfirmacion() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppTheme.gris,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          title: const Text(
+            '¿Cerrar sesión?',
+            style: TextStyle(
+              color: AppTheme.blanco,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          content: const Text(
+            '¿Estás seguro que deseas cerrar tu sesión?',
+            style: TextStyle(
+              color: AppTheme.blanco,
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: const Text(
+                'Cancelar',
+                style: TextStyle(
+                  color: AppTheme.blanco,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: const Text(
+                'Cerrar sesión',
+                style: TextStyle(
+                  color: AppTheme.naranja,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+                _cerrarSesion();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   Future<void> _cerrarSesion() async {
@@ -69,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
         backgroundColor: AppTheme.colorFondo,
         elevation: 0,
         title: const Text(
-          'Resumen Financiero',
+          'Resumen financiero',
           style: TextStyle(
             color: AppTheme.blanco,
             fontSize: 22,
@@ -80,53 +135,53 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(
-              Icons.logout, 
+              Icons.logout,
               color: Colors.white,
             ),
-            tooltip: 'Cerrar Sesión',
-            onPressed: _cerrarSesion,
+            tooltip: 'Cerrar sesion',
+            onPressed: _mostrarDialogoConfirmacion,
           ),
         ],
       ),
       drawer: MenuDesplegable(idUsuario: widget.idUsuario),
-      body: _viewModel.isLoading 
-        ? const Center(
-            child: CircularProgressIndicator(
-              color: AppTheme.naranja,
-              strokeWidth: 4,
-            ),
-          )
-        : _viewModel.errorMessage.isNotEmpty
-          ? Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.error_outline, 
-                    color: Colors.red, 
-                    size: 50,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    _viewModel.errorMessage, 
-                    style: const TextStyle(
-                      color: Colors.red, 
-                      fontSize: 16,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
-                  const SizedBox(height: 16),
-                  ElevatedButton(
-                    onPressed: _viewModel.cargarDatos,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppTheme.naranja,
-                    ),
-                    child: const Text('Reintentar'),
-                  ),
-                ],
+      body: _viewModel.isLoading
+          ? const Center(
+              child: CircularProgressIndicator(
+                color: AppTheme.naranja,
+                strokeWidth: 4,
               ),
             )
-          : _buildBody(),
+          : _viewModel.errorMessage.isNotEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        color: Colors.red,
+                        size: 50,
+                      ),
+                      const SizedBox(height: 16),
+                      Text(
+                        _viewModel.errorMessage,
+                        style: const TextStyle(
+                          color: Colors.red,
+                          fontSize: 16,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _viewModel.cargarDatos,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppTheme.naranja,
+                        ),
+                        child: const Text('Reintentar'),
+                      ),
+                    ],
+                  ),
+                )
+              : _buildBody(),
       bottomNavigationBar: CustomBottomNavBar(
         idUsuario: widget.idUsuario,
         currentIndex: 0,
@@ -145,24 +200,52 @@ class _HomeScreenState extends State<HomeScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              _buildDateSelector(),
               _buildResumenMensual(),
-              
               const SizedBox(height: 24),
-              _buildSectionHeader('Últimas Transacciones', Icons.receipt_long),
+              _buildSectionHeader('Ultimas transacciones', Icons.receipt_long),
               _buildUltimasTransacciones(),
-              
               const SizedBox(height: 24),
-              _buildSectionHeader('Presupuestos Activos', Icons.account_balance_wallet),
+              _buildSectionHeader(
+                  'Presupuestos activos', Icons.account_balance_wallet),
               _buildPresupuestosActivos(),
-              
               const SizedBox(height: 24),
-              _buildSectionHeader('Metas de Ahorro', Icons.savings),
+              _buildSectionHeader('Metas de ahorro', Icons.savings),
               _buildMetasAhorro(),
-              
               const SizedBox(height: 16),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Widget _buildDateSelector() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          IconButton(
+            icon: const Icon(Icons.arrow_back_ios, color: AppTheme.blanco),
+            onPressed: _viewModel.cambiarMesAnterior,
+          ),
+          GestureDetector(
+            onTap: _viewModel.cambiarMesActual,
+            child: Text(
+              DateFormat('MMMM yyyy', 'es_ES').format(_viewModel.fechaInicio),
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppTheme.blanco,
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(Icons.arrow_forward_ios, color: AppTheme.blanco),
+            onPressed: _viewModel.cambiarMesSiguiente,
+          ),
+        ],
       ),
     );
   }
@@ -197,24 +280,14 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildResumenMensual() {
     final formatoMoneda = NumberFormat.currency(locale: 'es_MX', symbol: '\$');
-    
+
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.only(bottom: 8),
+      margin: const EdgeInsets.only(bottom: 8, top: 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // Month display
-          Text(
-            DateFormat('MMMM yyyy', 'es_MX').format(DateTime.now()),
-            style: TextStyle(
-              fontSize: 16,
-              color: AppTheme.blanco.withOpacity(0.8),
-            ),
-          ),
-          const SizedBox(height: 8),
-          
-          // Balance amount with large, prominent display
+          //balance total
           Text(
             formatoMoneda.format(_viewModel.balanceTotal),
             style: TextStyle(
@@ -224,11 +297,11 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 16),
-          
-          // Income and expense summary cards in a row
+
+          //resumen de ingresos y gastos
           Row(
             children: [
-              // Income card
+              //ingresos
               Expanded(
                 child: _buildFinancialCard(
                   'Ingresos',
@@ -238,7 +311,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-              // Expense card
+
+              //gastos
               Expanded(
                 child: _buildFinancialCard(
                   'Gastos',
@@ -254,7 +328,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFinancialCard(String title, String amount, IconData icon, Color color) {
+  Widget _buildFinancialCard(
+      String title, String amount, IconData icon, Color color) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       decoration: BoxDecoration(
@@ -308,35 +383,38 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: _viewModel.ultimasTransacciones.isEmpty
-        ? const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Center(
-              child: Text(
-                'No hay transacciones recientes',
-                style: TextStyle(color: AppTheme.blanco),
+          ? const Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Center(
+                child: Text(
+                  'No hay transacciones para este período',
+                  style: TextStyle(color: AppTheme.blanco),
+                ),
               ),
+            )
+          : ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _viewModel.ultimasTransacciones.length,
+              separatorBuilder: (context, index) => const Divider(
+                color: AppTheme.gris,
+                height: 1,
+              ),
+              itemBuilder: (context, index) {
+                return _buildTransaccionItem(
+                    _viewModel.ultimasTransacciones[index]);
+              },
             ),
-          )
-        : ListView.separated(
-            shrinkWrap: true,
-            physics: const NeverScrollableScrollPhysics(),
-            itemCount: _viewModel.ultimasTransacciones.length,
-            separatorBuilder: (context, index) => const Divider(
-              color: AppTheme.gris,
-              height: 1,
-            ),
-            itemBuilder: (context, index) {
-              return _buildTransaccionItem(_viewModel.ultimasTransacciones[index]);
-            },
-          ),
     );
   }
 
   Widget _buildTransaccionItem(Transaccion transaccion) {
     final formatoMoneda = NumberFormat.currency(locale: 'es_MX', symbol: '\$');
-    final bool esIngreso = transaccion.tipoTransaccion == TipoTransacciones.INGRESO;
+    final bool esIngreso =
+        transaccion.tipoTransaccion == TipoTransacciones.INGRESO;
     final Color colorMonto = esIngreso ? Colors.green : Colors.red;
-    final IconData icono = esIngreso ? Icons.arrow_upward : Icons.arrow_downward;
+    final IconData icono =
+        esIngreso ? Icons.arrow_upward : Icons.arrow_downward;
 
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
@@ -378,7 +456,9 @@ class _HomeScreenState extends State<HomeScreen> {
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               Text(
-                formatoMoneda.format(transaccion.cantidad),
+                esIngreso
+                    ? '+ ${formatoMoneda.format(transaccion.cantidad)}'
+                    : '- ${formatoMoneda.format(transaccion.cantidad)}',
                 style: TextStyle(
                   fontWeight: FontWeight.bold,
                   color: colorMonto,
@@ -407,26 +487,27 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: _viewModel.presupuestos.isEmpty
-        ? const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'No hay presupuestos activos',
-                style: TextStyle(color: AppTheme.blanco),
+          ? const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'No hay presupuestos activos',
+                  style: TextStyle(color: AppTheme.blanco),
+                ),
               ),
+            )
+          : ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _viewModel.presupuestos.length,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              itemBuilder: (context, index) =>
+                  _buildPresupuestoItem(_viewModel.presupuestos[index]),
             ),
-          )
-        : ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: _viewModel.presupuestos.length,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            itemBuilder: (context, index) => _buildPresupuestoItem(_viewModel.presupuestos[index]),
-          ),
     );
   }
 
   Widget _buildPresupuestoItem(Presupuesto presupuesto) {
-    final formatoMoneda = NumberFormat.currency(locale: 'es_ES', symbol: '\$');
+    final formatoMoneda = NumberFormat.currency(locale: 'es_MX', symbol: '\$');
     final double gastado = presupuesto.cantidadGastada;
     final double porcentaje = gastado / presupuesto.cantidad;
 
@@ -500,21 +581,22 @@ class _HomeScreenState extends State<HomeScreen> {
         borderRadius: BorderRadius.circular(12),
       ),
       child: _viewModel.metasAhorro.isEmpty
-        ? const Center(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'No hay metas de ahorro activas',
-                style: TextStyle(color: AppTheme.blanco),
+          ? const Center(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text(
+                  'No hay metas de ahorro activas',
+                  style: TextStyle(color: AppTheme.blanco),
+                ),
               ),
+            )
+          : ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _viewModel.metasAhorro.length,
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+              itemBuilder: (context, index) =>
+                  _buildMetaAhorroItem(_viewModel.metasAhorro[index]),
             ),
-          )
-        : ListView.builder(
-            scrollDirection: Axis.horizontal,
-            itemCount: _viewModel.metasAhorro.length,
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
-            itemBuilder: (context, index) => _buildMetaAhorroItem(_viewModel.metasAhorro[index]),
-          ),
     );
   }
 
@@ -586,4 +668,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-

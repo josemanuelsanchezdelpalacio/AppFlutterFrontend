@@ -21,7 +21,7 @@ class ExportarDatosViewmodel extends ChangeNotifier {
   final MetasAhorroService _metasAhorroService = MetasAhorroService();
 
   bool transaccionesExistentes = false;
-  bool presupuestosExistentes= false;
+  bool presupuestosExistentes = false;
   bool metasExistentes = false;
 
   List<Transaccion> transacciones = [];
@@ -51,7 +51,7 @@ class ExportarDatosViewmodel extends ChangeNotifier {
       metasAhorro = metasAhorroData;
 
       transaccionesExistentes = transacciones.isNotEmpty;
-      presupuestosExistentes= presupuestos.isNotEmpty;
+      presupuestosExistentes = presupuestos.isNotEmpty;
       metasExistentes = metasAhorro.isNotEmpty;
 
       notifyListeners();
@@ -133,17 +133,15 @@ class ExportarDatosViewmodel extends ChangeNotifier {
             _pdfCeldasTablas('Descripción', isHeader: true),
           ]),
       // Datos
-      ...transacciones
-          .map((t) => pw.TableRow(children: [
-                _pdfCeldasTablas(formatoDatos.format(t.fechaTransaccion)),
-                _pdfCeldasTablas(t.tipoTransaccion == TipoTransacciones.INGRESO
-                    ? 'Ingreso'
-                    : 'Gasto'),
-                _pdfCeldasTablas(t.categoria),
-                _pdfCeldasTablas('\$${t.cantidad.toStringAsFixed(2)}'),
-                _pdfCeldasTablas(t.descripcion),
-              ]))
-          .toList(),
+      ...transacciones.map((t) => pw.TableRow(children: [
+            _pdfCeldasTablas(formatoDatos.format(t.fechaTransaccion)),
+            _pdfCeldasTablas(t.tipoTransaccion == TipoTransacciones.INGRESO
+                ? 'Ingreso'
+                : 'Gasto'),
+            _pdfCeldasTablas(t.categoria),
+            _pdfCeldasTablas('\$${t.cantidad.toStringAsFixed(2)}'),
+            _pdfCeldasTablas(t.descripcion),
+          ])),
     ]);
   }
 
@@ -166,17 +164,14 @@ class ExportarDatosViewmodel extends ChangeNotifier {
             _pdfCeldasTablas('Periodo', isHeader: true),
           ]),
       //datos
-      ...presupuestos
-          .map((p) => pw.TableRow(children: [
-                _pdfCeldasTablas(p.categoria),
-                _pdfCeldasTablas('\$${p.cantidad.toStringAsFixed(2)}'),
-                _pdfCeldasTablas('\$${(p.cantidadGastada).toStringAsFixed(2)}'),
-                _pdfCeldasTablas(
-                    '\$${(p.cantidadRestante).toStringAsFixed(2)}'),
-                _pdfCeldasTablas(
-                    '${formatoDatos.format(p.fechaInicio)} - ${formatoDatos.format(p.fechaFin)}'),
-              ]))
-          .toList(),
+      ...presupuestos.map((p) => pw.TableRow(children: [
+            _pdfCeldasTablas(p.categoria),
+            _pdfCeldasTablas('\$${p.cantidad.toStringAsFixed(2)}'),
+            _pdfCeldasTablas('\$${(p.cantidadGastada).toStringAsFixed(2)}'),
+            _pdfCeldasTablas('\$${(p.cantidadRestante).toStringAsFixed(2)}'),
+            _pdfCeldasTablas(
+                '${formatoDatos.format(p.fechaInicio)} - ${formatoDatos.format(p.fechaFin)}'),
+          ])),
     ]);
   }
 
@@ -199,15 +194,13 @@ class ExportarDatosViewmodel extends ChangeNotifier {
             _pdfCeldasTablas('Fecha limite', isHeader: true),
           ]),
       //datos
-      ...metasAhorro
-          .map((m) => pw.TableRow(children: [
-                _pdfCeldasTablas(m.nombre),
-                _pdfCeldasTablas('\$${m.cantidadObjetivo.toStringAsFixed(2)}'),
-                _pdfCeldasTablas('\$${m.cantidadActual.toStringAsFixed(2)}'),
-                _pdfCeldasTablas(m.completada ? 'Completada' : 'Pendiente'),
-                _pdfCeldasTablas(formatoDatos.format(m.fechaObjetivo)),
-              ]))
-          .toList(),
+      ...metasAhorro.map((m) => pw.TableRow(children: [
+            _pdfCeldasTablas(m.nombre),
+            _pdfCeldasTablas('\$${m.cantidadObjetivo.toStringAsFixed(2)}'),
+            _pdfCeldasTablas('\$${m.cantidadActual.toStringAsFixed(2)}'),
+            _pdfCeldasTablas(m.completada ? 'Completada' : 'Pendiente'),
+            _pdfCeldasTablas(formatoDatos.format(m.fechaObjetivo)),
+          ])),
     ]);
   }
 
@@ -357,5 +350,6 @@ class ExportarDatosViewmodel extends ChangeNotifier {
     }
   }
 
-  bool get hasAnyData => transaccionesExistentes || presupuestosExistentes|| metasExistentes;
+  bool get hasAnyData =>
+      transaccionesExistentes || presupuestosExistentes || metasExistentes;
 }

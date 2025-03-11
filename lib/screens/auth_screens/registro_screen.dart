@@ -1,34 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_proyecto_app/models/register_screen_viewmodel.dart';
+import 'package:flutter_proyecto_app/screens/auth_screens/login_screen.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_proyecto_app/screens/login_screen.dart';
 
-class RegisterScreen extends StatelessWidget {
-  const RegisterScreen({Key? key}) : super(key: key);
+class RegistroScreen extends StatelessWidget {
+  const RegistroScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (context) => RegisterViewModel(),
+      create: (context) => RegistroViewModel(),
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Registro'),
         ),
-        body: const RegisterForm(),
+        body: const RegistroForm(),
       ),
     );
   }
 }
 
-class RegisterForm extends StatefulWidget {
-  const RegisterForm({Key? key}) : super(key: key);
+class RegistroForm extends StatefulWidget {
+  const RegistroForm({super.key});
 
   @override
-  State<RegisterForm> createState() => _RegisterFormState();
+  State<RegistroForm> createState() => _RegistroFormState();
 }
 
-class _RegisterFormState extends State<RegisterForm> {
+class _RegistroFormState extends State<RegistroForm> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -42,7 +42,7 @@ class _RegisterFormState extends State<RegisterForm> {
 
   @override
   Widget build(BuildContext context) {
-    final viewModel = Provider.of<RegisterViewModel>(context);
+    final viewModel = Provider.of<RegistroViewModel>(context);
 
     return Padding(
       padding: const EdgeInsets.all(16.0),
@@ -61,41 +61,43 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
               ),
               const SizedBox(height: 24),
-              // Campo de email con validación mejorada
+
+              //campo de email
               TextFormField(
                 controller: emailController,
                 decoration: const InputDecoration(
                   labelText: 'Email',
-                  border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.email),
                 ),
                 keyboardType: TextInputType.emailAddress,
                 inputFormatters: [
-                  FilteringTextInputFormatter.deny(RegExp(r'\s')), // No permite espacios
+                  //para no permitir los espacios
+                  FilteringTextInputFormatter.deny(RegExp(r'\s')),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa un email';
+                    return 'Ingresa un email';
                   }
-                  // Validación más completa del formato de email
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                  //validacion para el campo del email
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                      .hasMatch(value)) {
                     return 'Por favor ingresa un email válido';
                   }
                   return null;
                 },
               ),
               const SizedBox(height: 16),
-              // Campo de contraseña con validación mejorada
+
+              //campo de contraseña
               TextFormField(
                 controller: passwordController,
                 decoration: InputDecoration(
                   labelText: 'Contraseña',
-                  border: const OutlineInputBorder(),
                   prefixIcon: const Icon(Icons.lock),
                   suffixIcon: IconButton(
                     icon: Icon(
-                      viewModel.passwordVisible 
-                          ? Icons.visibility 
+                      viewModel.passwordVisible
+                          ? Icons.visibility
                           : Icons.visibility_off,
                     ),
                     onPressed: () {
@@ -106,12 +108,13 @@ class _RegisterFormState extends State<RegisterForm> {
                 ),
                 obscureText: !viewModel.passwordVisible,
                 inputFormatters: [
-                  // Limitamos a caracteres comunes en contraseñas
-                  FilteringTextInputFormatter.allow(RegExp(r'[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]')),
+                  //limito a caracteres comunes en contraseñas
+                  FilteringTextInputFormatter.allow(
+                      RegExp(r'[a-zA-Z0-9!@#$%^&*(),.?":{}|<>]')),
                 ],
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Por favor ingresa una contraseña';
+                    return 'Ingresa una contraseña';
                   }
                   if (value.length < 6) {
                     return 'La contraseña debe tener al menos 6 caracteres';
@@ -145,10 +148,11 @@ class _RegisterFormState extends State<RegisterForm> {
                 onPressed: () {
                   Navigator.pushReplacement(
                     context,
-                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                    MaterialPageRoute(
+                        builder: (context) => const LoginScreen()),
                   );
                 },
-                child: const Text('¿Ya tienes cuenta? Inicia sesión'),
+                child: const Text('¿Ya tienes cuenta? Inicia sesion'),
               ),
             ],
           ),
@@ -157,3 +161,4 @@ class _RegisterFormState extends State<RegisterForm> {
     );
   }
 }
+

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_proyecto_app/data/usuario.dart';
-import 'package:flutter_proyecto_app/screens/login_screen.dart';
+import 'package:flutter_proyecto_app/screens/auth_screens/login_screen.dart';
 import 'package:flutter_proyecto_app/services/auth_service.dart';
 
-class RegisterViewModel with ChangeNotifier {
+class RegistroViewModel with ChangeNotifier {
   final AuthService _authService = AuthService();
   bool _isLoading = false;
   String? _mensajeError;
@@ -28,7 +28,8 @@ class RegisterViewModel with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> registrar(String email, String password, BuildContext context) async {
+  Future<void> registrar(
+      String email, String password, BuildContext context) async {
     if (_isLoading) return;
 
     _setLoading(true);

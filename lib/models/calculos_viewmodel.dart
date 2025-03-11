@@ -13,23 +13,22 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
   bool _isLoading = true;
   List<MetaAhorro> _metasAhorro = [];
 
-  // Parámetros para proyecciones
+  //parametros para proyecciones
   double _ahorroMensual = 0;
   double _gastoMensual = 0;
   double _ingresoMensual = 0;
   int _mesesProyeccion = 6;
 
-  // Parámetros para ROI
+  //parametros para ROI
   double _inversionInicial = 0;
   double _retornoEsperado = 0;
   int _periodoInversion = 12;
 
-  // Parámetros para préstamos
+  //parametros para préstamos
   double _montoPrestamo = 0;
   double _tasaInteres = 0;
   int _plazoPrestamo = 12;
 
-  // Getters
   bool get isLoading => _isLoading;
   double get ahorroMensual => _ahorroMensual;
   double get gastoMensual => _gastoMensual;
@@ -42,6 +41,12 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
   double get tasaInteres => _tasaInteres;
   int get plazoPrestamo => _plazoPrestamo;
   List<MetaAhorro> get metasAhorro => _metasAhorro;
+
+  //formateador para las cantidades monetarias
+  final NumberFormat currencyFormat = NumberFormat.currency(
+    symbol: '',
+    decimalDigits: 2,
+  );
 
   CalculosFinancierosViewModel({required this.idUsuario}) {
     cargarDatos();
@@ -77,9 +82,9 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
       }
 
       _metasAhorro = metasAhorro;
-      _ingresoMensual = ingresos;
-      _gastoMensual = gastos;
-      _ahorroMensual = ingresos - gastos;
+      _ingresoMensual = double.parse(ingresos.toStringAsFixed(2));
+      _gastoMensual = double.parse(gastos.toStringAsFixed(2));
+      _ahorroMensual = double.parse((_ingresoMensual - _gastoMensual).toStringAsFixed(2));
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -92,13 +97,13 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
   // Setters para valores de proyecciones
   void setIngresoMensual(double valor) {
     _ingresoMensual = double.parse(valor.toStringAsFixed(2));
-    _ahorroMensual = _ingresoMensual - _gastoMensual;
+    _ahorroMensual = double.parse((_ingresoMensual - _gastoMensual).toStringAsFixed(2));
     notifyListeners();
   }
 
   void setGastoMensual(double valor) {
     _gastoMensual = double.parse(valor.toStringAsFixed(2));
-    _ahorroMensual = _ingresoMensual - _gastoMensual;
+    _ahorroMensual = double.parse((_ingresoMensual - _gastoMensual).toStringAsFixed(2));
     notifyListeners();
   }
 
@@ -108,18 +113,23 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
   }
 
   void setAhorroMensual(double valor) {
-    _ahorroMensual = valor;
+    _ahorroMensual = double.parse(valor.toStringAsFixed(2));
     notifyListeners();
   }
 
-  // Setters para valores de ROI
+  // Formateadores para mostrar en UI
+  String formatearCantidad(double valor) {
+    return currencyFormat.format(valor);
+  }
+
+  //setters para valores de ROI
   void setInversionInicial(double valor) {
-    _inversionInicial = valor;
+    _inversionInicial = double.parse(valor.toStringAsFixed(2));
     notifyListeners();
   }
 
   void setRetornoEsperado(double valor) {
-    _retornoEsperado = valor;
+    _retornoEsperado = double.parse(valor.toStringAsFixed(2));
     notifyListeners();
   }
 
@@ -128,14 +138,14 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Setters para valores de préstamos
+  //setters para valores de prestamos
   void setMontoPrestamo(double valor) {
-    _montoPrestamo = valor;
+    _montoPrestamo = double.parse(valor.toStringAsFixed(2));
     notifyListeners();
   }
 
   void setTasaInteres(double valor) {
-    _tasaInteres = valor;
+    _tasaInteres = double.parse(valor.toStringAsFixed(2));
     notifyListeners();
   }
 
@@ -144,7 +154,7 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // Cálculos de Proyecciones
+  //calculos de Proyecciones
   List<Map<String, dynamic>> calcularProyecciones() {
     List<Map<String, dynamic>> proyecciones = [];
     double saldoAcumulado = 0;
@@ -153,7 +163,7 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
 
     for (int i = 0; i < _mesesProyeccion; i++) {
       final mesProyectado = DateTime(ahora.year, ahora.month + i, 1);
-      saldoAcumulado += _ahorroMensual;
+      saldoAcumulado = double.parse((saldoAcumulado + _ahorroMensual).toStringAsFixed(2));
 
       proyecciones.add({
         'mes': DateFormat('MMMM yyyy').format(mesProyectado),
@@ -167,21 +177,23 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
     return proyecciones;
   }
 
-  // Cálculos de ROI
+  //calculos de ROI
   Map<String, dynamic> calcularROI() {
     double roi = _inversionInicial > 0
-        ? ((_retornoEsperado - _inversionInicial) / _inversionInicial) * 100
+        ? double.parse((((_retornoEsperado - _inversionInicial) / _inversionInicial) * 100).toStringAsFixed(2))
         : 0;
 
-    double roiAnual = roi / (_periodoInversion / 12);
+    double roiAnual = double.parse((roi / (_periodoInversion / 12)).toStringAsFixed(2));
+    double gananciaTotal = double.parse((_retornoEsperado - _inversionInicial).toStringAsFixed(2));
+    double gananciaMensual = double.parse((gananciaTotal / _periodoInversion).toStringAsFixed(2));
+    double proyeccionAnual = double.parse((_inversionInicial * 12 * (1 + (roi / 100) / 12)).toStringAsFixed(2));
 
     return {
       'roi': roi,
       'roiAnual': roiAnual,
-      'gananciaTotal': _retornoEsperado - _inversionInicial,
-      'gananciaMensual':
-          (_retornoEsperado - _inversionInicial) / _periodoInversion,
-      'proyeccionAnual': _inversionInicial * 12 * (1 + (roi / 100) / 12),
+      'gananciaTotal': gananciaTotal,
+      'gananciaMensual': gananciaMensual,
+      'proyeccionAnual': proyeccionAnual,
       'recomendacion': roi > 15
           ? 'Esta inversión muestra un rendimiento excelente.'
           : roi > 5
@@ -192,9 +204,9 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
     };
   }
 
-  // Cálculos de Préstamos
+  // Cálculos de prestamos
   Map<String, dynamic> calcularPrestamo() {
-    double tasaMensual = _tasaInteres / 100 / 12;
+    double tasaMensual = double.parse((_tasaInteres / 100 / 12).toStringAsFixed(6));
     double cuotaMensual = 0;
 
     if (tasaMensual > 0) {
@@ -202,23 +214,25 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
           tasaMensual *
           pow(1 + tasaMensual, _plazoPrestamo) /
           (pow(1 + tasaMensual, _plazoPrestamo) - 1);
+      cuotaMensual = double.parse(cuotaMensual.toStringAsFixed(2));
     }
 
-    double totalPagado = cuotaMensual * _plazoPrestamo;
-    double totalIntereses = totalPagado - _montoPrestamo;
+    double totalPagado = double.parse((cuotaMensual * _plazoPrestamo).toStringAsFixed(2));
+    double totalIntereses = double.parse((totalPagado - _montoPrestamo).toStringAsFixed(2));
+    double tasaMensualPorcentaje = double.parse((tasaMensual * 100).toStringAsFixed(2));
 
     return {
       'cuotaMensual': cuotaMensual,
       'totalPagado': totalPagado,
       'totalIntereses': totalIntereses,
-      'tasaMensual': tasaMensual * 100,
+      'tasaMensual': tasaMensualPorcentaje,
     };
   }
 
-  // Tabla de amortización para préstamos
+  //amortizacion para prestamos
   List<Map<String, dynamic>> calcularTablaAmortizacion() {
     List<Map<String, dynamic>> tablaAmortizacion = [];
-    double tasaMensual = _tasaInteres / 100 / 12;
+    double tasaMensual = double.parse((_tasaInteres / 100 / 12).toStringAsFixed(6));
     double cuotaMensual = 0;
 
     if (tasaMensual > 0) {
@@ -226,18 +240,19 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
           tasaMensual *
           pow(1 + tasaMensual, _plazoPrestamo) /
           (pow(1 + tasaMensual, _plazoPrestamo) - 1);
+      cuotaMensual = double.parse(cuotaMensual.toStringAsFixed(2));
     }
 
     double saldoPendiente = _montoPrestamo;
 
     for (int i = 1; i <= _plazoPrestamo; i++) {
-      double interesMensual = saldoPendiente * tasaMensual;
-      double amortizacion = cuotaMensual - interesMensual;
-      saldoPendiente -= amortizacion;
+      double interesMensual = double.parse((saldoPendiente * tasaMensual).toStringAsFixed(2));
+      double amortizacion = double.parse((cuotaMensual - interesMensual).toStringAsFixed(2));
+      saldoPendiente = double.parse((saldoPendiente - amortizacion).toStringAsFixed(2));
 
-      // Corregir posibles errores de redondeo en el último mes
+      //corrijo posibles errores de redondeo en el ultimo mes
       if (i == _plazoPrestamo) {
-        amortizacion += saldoPendiente;
+        amortizacion = double.parse((amortizacion + saldoPendiente).toStringAsFixed(2));
         saldoPendiente = 0;
       }
 
@@ -253,52 +268,52 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
     return tablaAmortizacion;
   }
 
-  // Cálculos para metas de ahorro
+  //calculos para metas de ahorro
   List<Map<String, dynamic>> calcularTiempoMetas() {
     List<Map<String, dynamic>> resultados = [];
 
-    // Si no hay metas o el ahorro mensual es 0, devolver lista vacía
+    //si no hay metas o el ahorro mensual es 0 devuelvo la lista vacia
     if (metasAhorro.isEmpty) {
       return resultados;
     }
 
     for (var meta in metasAhorro) {
-      double montoFaltante = meta.cantidadObjetivo - meta.cantidadActual;
+      double montoFaltante = double.parse((meta.cantidadObjetivo - meta.cantidadActual).toStringAsFixed(2));
 
-      // Calcular porcentaje de avance
+      //calculo porcentaje de avance
       double porcentajeCompletado = 0.0;
       if (meta.cantidadObjetivo > 0) {
-        porcentajeCompletado =
-            (meta.cantidadActual / meta.cantidadObjetivo) * 100;
-        // Limitar el porcentaje entre 0 y 100
+        porcentajeCompletado = double.parse(
+            ((meta.cantidadActual / meta.cantidadObjetivo) * 100).toStringAsFixed(2));
+        //limito el porcentaje entre 0 y 100
         porcentajeCompletado = porcentajeCompletado.clamp(0.0, 100.0);
       }
 
-      // Calcular meses estimados - evitar división por cero
+      //calculo meses estimados
       int mesesEstimados = 0;
       DateTime? fechaEstimada;
       String recomendacion = '';
 
       if (montoFaltante > 0) {
         if (ahorroMensual > 0) {
-          // Calcular meses y verificar que no sea infinito o NaN
+          //calculo meses y compruebo que no sea infinito
           double mesesDouble = montoFaltante / ahorroMensual;
           if (mesesDouble.isFinite && !mesesDouble.isNaN) {
-            mesesEstimados = mesesDouble.ceil(); // Redondeamos hacia arriba
+            mesesEstimados = mesesDouble.ceil(); //redondeo
 
-            // Calcular fecha estimada
+            //calculo fecha estimada
             fechaEstimada =
                 DateTime.now().add(Duration(days: (mesesEstimados * 30)));
 
-            // Generar recomendación
+            //genero la recomendacion
             if (mesesEstimados > 24) {
               recomendacion =
-                  'Considera aumentar tu ahorro mensual para alcanzar tu meta más rápido.';
+                  'Considera aumentar tu ahorro mensual para alcanzar tu meta mas rapido';
             } else if (mesesEstimados > 12) {
-              recomendacion = 'Vas por buen camino, mantén tu ritmo de ahorro.';
+              recomendacion = 'Vas por buen camino, manten tu ritmo de ahorro.';
             } else {
               recomendacion =
-                  '¡Excelente! Estás muy cerca de alcanzar tu meta.';
+                  'Estas muy cerca de alcanzar tu meta.';
             }
           } else {
             recomendacion =
@@ -306,11 +321,11 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
           }
         } else {
           recomendacion =
-              'Ingresa un monto de ahorro mensual para calcular el tiempo estimado.';
+              'Ingresa una cantidad de ahorro mensual para calcular el tiempo estimado.';
         }
       } else {
         // La meta ya se ha alcanzado
-        recomendacion = '¡Felicidades! Has alcanzado tu meta de ahorro.';
+        recomendacion = 'Has alcanzado tu meta de ahorro.';
       }
 
       resultados.add({
@@ -326,12 +341,13 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
     return resultados;
   }
 
-  // Función auxiliar para cálculos de potencia
+  //funcion auxiliar para calculos de potencia
   double pow(double x, int y) {
     double result = 1.0;
     for (int i = 0; i < y; i++) {
       result *= x;
     }
-    return result;
+    return double.parse(result.toStringAsFixed(6));
   }
 }
+

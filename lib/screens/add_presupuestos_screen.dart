@@ -4,7 +4,7 @@ import 'package:flutter_proyecto_app/components/custom_bottom_app_bar.dart';
 import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
 import 'package:flutter_proyecto_app/data/presupuesto.dart';
 import 'package:flutter_proyecto_app/models/add_presupuestos_viewmodel.dart';
-import 'package:flutter_proyecto_app/screens/presupuestos_screen.dart'; 
+import 'package:flutter_proyecto_app/screens/presupuestos_screen.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:intl/intl.dart';
 
@@ -13,10 +13,10 @@ class AddPresupuestoScreen extends StatefulWidget {
   final Presupuesto? presupuestoParaEditar;
 
   const AddPresupuestoScreen({
-    Key? key, 
+    super.key,
     required this.idUsuario,
     this.presupuestoParaEditar,
-  }) : super(key: key);
+  });
 
   @override
   State<AddPresupuestoScreen> createState() => _AddPresupuestoScreenState();
@@ -29,15 +29,14 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
   void initState() {
     super.initState();
     _viewModel = AddPresupuestoViewModel(
-      idUsuario: widget.idUsuario,
-      presupuestoParaEditar: widget.presupuestoParaEditar,
-      onStateChanged: () {
-        if (mounted) setState(() {});
-      }
-    );
+        idUsuario: widget.idUsuario,
+        presupuestoParaEditar: widget.presupuestoParaEditar,
+        onStateChanged: () {
+          if (mounted) setState(() {});
+        });
     _viewModel.inicializarFormulario();
   }
-  
+
   @override
   void dispose() {
     _viewModel.dispose();
@@ -48,7 +47,8 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(_viewModel.isEditMode ? 'Editar Presupuesto' : 'Crear Presupuesto'),
+        title: Text(
+            _viewModel.isEditMode ? 'Editar presupuesto' : 'Crear presupuesto'),
         centerTitle: true,
       ),
       drawer: MenuDesplegable(idUsuario: widget.idUsuario),
@@ -67,6 +67,10 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
                   _buildNombreInput(),
                   const SizedBox(height: 16),
                   _buildCategoriaDropdown(),
+                  if (_viewModel.mostrarCampoNuevaCategoria) ...[
+                    const SizedBox(height: 16),
+                    _buildNuevaCategoriaInput(),
+                  ],
                   const SizedBox(height: 16),
                   _buildMontoInput(),
                   const SizedBox(height: 16),
@@ -110,7 +114,7 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
           ),
           const SizedBox(height: 16),
           Text(
-            _viewModel.isEditMode ? 'Editar Presupuesto' : 'Nuevo Presupuesto',
+            _viewModel.isEditMode ? 'Editar presupuesto' : 'Nuevo presupuesto',
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
@@ -119,7 +123,7 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
           ),
           const SizedBox(height: 8),
           Text(
-            _viewModel.isEditMode 
+            _viewModel.isEditMode
                 ? 'Modifica los detalles de tu presupuesto'
                 : 'Crea un presupuesto para controlar tus gastos',
             textAlign: TextAlign.center,
@@ -153,7 +157,7 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
     return TextFormField(
       controller: _viewModel.nombreController,
       decoration: InputDecoration(
-        labelText: 'Nombre del Presupuesto',
+        labelText: 'Nombre del presupuesto',
         prefixIcon: const Icon(Icons.label_outline),
         hintText: 'Ej: Vacaciones, Compras del mes, etc.',
         filled: true,
@@ -164,7 +168,8 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
         ),
       ),
       inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]')),
+        FilteringTextInputFormatter.allow(
+            RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]')),
       ],
       style: const TextStyle(color: AppTheme.blanco),
       validator: (value) => _viewModel.validarNombre(value),
@@ -181,13 +186,14 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
       ),
       child: DropdownButtonFormField<String>(
         decoration: const InputDecoration(
-          labelText: 'Categoría',
+          labelText: 'Categoria',
           border: InputBorder.none,
           contentPadding: EdgeInsets.symmetric(vertical: 8),
         ),
-        // Aseguramos de que value siempre sea uno de los valores de la lista
-        value: _viewModel.categorias.contains(_viewModel.categoriaSeleccionada) 
-            ? _viewModel.categoriaSeleccionada 
+
+        //aseguro de que los valores siempre sea uno de los valores de la lista
+        value: _viewModel.categorias.contains(_viewModel.categoriaSeleccionada)
+            ? _viewModel.categoriaSeleccionada
             : _viewModel.categorias.first,
         dropdownColor: AppTheme.gris,
         style: const TextStyle(color: AppTheme.blanco),
@@ -195,7 +201,14 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
         items: _viewModel.categorias.map((String categoria) {
           return DropdownMenuItem<String>(
             value: categoria,
-            child: Text(categoria),
+            child: Text(
+              categoria,
+              style: TextStyle(
+                fontStyle: categoria == 'Agregar categoría personalizada...'
+                    ? FontStyle.italic
+                    : FontStyle.normal,
+              ),
+            ),
           );
         }).toList(),
         onChanged: (String? newValue) {
@@ -205,13 +218,62 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
             });
           }
         },
-        validator: (value) {
-          if (value == null || value.isEmpty) {
-            return 'Por favor selecciona una categoría';
-          }
-          return null;
-        },
+        validator: (value) => _viewModel.validarCategoria(value),
       ),
+    );
+  }
+
+  Widget _buildNuevaCategoriaInput() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        TextFormField(
+          controller: _viewModel.nuevaCategoriaController,
+          decoration: InputDecoration(
+            labelText: 'Nueva categoría personalizada',
+            prefixIcon: const Icon(Icons.create_new_folder_outlined),
+            hintText: 'Ej: Mascotas, Aficiones, etc.',
+            filled: true,
+            fillColor: AppTheme.gris,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide.none,
+            ),
+          ),
+          inputFormatters: [
+            FilteringTextInputFormatter.allow(
+                RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]')),
+          ],
+          style: const TextStyle(color: AppTheme.blanco),
+          validator: _viewModel.mostrarCampoNuevaCategoria
+              ? (value) => _viewModel.validarNuevaCategoria(value)
+              : null,
+          textCapitalization: TextCapitalization.sentences,
+        ),
+        const SizedBox(height: 8),
+        ElevatedButton.icon(
+          onPressed: () {
+            final nuevaCategoria =
+                _viewModel.nuevaCategoriaController.text.trim();
+            if (nuevaCategoria.isNotEmpty) {
+              _viewModel.agregarCategoriaPersonalizada(nuevaCategoria);
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: AppTheme.naranja,
+            foregroundColor: AppTheme.colorFondo,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 12),
+          ),
+          icon: const Icon(Icons.add),
+          label: const Text(
+            'Agregar categoría',
+            style: TextStyle(fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
     );
   }
 
@@ -236,13 +298,13 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
           if (newValue.text.isEmpty) {
             return newValue;
           }
-          
+
           if (newValue.text.contains('.')) {
             final parts = newValue.text.split('.');
             if (parts.length > 2) {
               return oldValue;
             }
-            
+
             if (parts.length == 2 && parts[1].length > 2) {
               return TextEditingValue(
                 text: '${parts[0]}.${parts[1].substring(0, 2)}',
@@ -250,7 +312,7 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
               );
             }
           }
-          
+
           return newValue;
         }),
       ],
@@ -261,12 +323,12 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
 
   Widget _buildFechasSection() {
     final DateFormat formatter = DateFormat('dd/MM/yyyy');
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const Text(
-          'Periodo del Presupuesto',
+          'Periodo del presupuesto',
           style: TextStyle(
             color: AppTheme.blanco,
             fontSize: 16,
@@ -326,11 +388,8 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
             const SizedBox(height: 8),
             Row(
               children: [
-                const Icon(
-                  Icons.calendar_today, 
-                  color: AppTheme.naranja, 
-                  size: 16
-                ),
+                const Icon(Icons.calendar_today,
+                    color: AppTheme.naranja, size: 16),
                 const SizedBox(width: 8),
                 Text(
                   formatter.format(date),
@@ -351,9 +410,9 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: esInicio ? _viewModel.fechaInicio : _viewModel.fechaFin,
-      firstDate: esInicio ? 
-        (_viewModel.isEditMode ? DateTime(2020) : DateTime.now()) : 
-        _viewModel.fechaInicio,
+      firstDate: esInicio
+          ? (_viewModel.isEditMode ? DateTime(2020) : DateTime.now())
+          : _viewModel.fechaInicio,
       lastDate: DateTime(2030),
       builder: (context, child) {
         return Theme(
@@ -370,7 +429,7 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
         );
       },
     );
-    
+
     if (picked != null) {
       if (esInicio) {
         _viewModel.actualizarFechaInicio(picked);
@@ -382,7 +441,8 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
 
   Widget _buildGuardarButton() {
     return ElevatedButton(
-      onPressed: _viewModel.isLoading ? null : () => _guardarPresupuesto(context),
+      onPressed:
+          _viewModel.isLoading ? null : () => _guardarPresupuesto(context),
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
         backgroundColor: AppTheme.naranja,
@@ -402,7 +462,9 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
               ),
             )
           : Text(
-              _viewModel.isEditMode ? 'ACTUALIZAR PRESUPUESTO' : 'GUARDAR PRESUPUESTO',
+              _viewModel.isEditMode
+                  ? 'Actualizar presupuesto'
+                  : 'Guardar presupuesto',
               style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -410,27 +472,25 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
             ),
     );
   }
-  
+
   Future<void> _guardarPresupuesto(BuildContext context) async {
     FocusScope.of(context).unfocus();
-    
+
     try {
       final bool resultado = await _viewModel.guardarPresupuesto();
-      
+
       if (!mounted) return;
-      
+
       if (resultado) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-              _viewModel.isEditMode 
-                ? 'Presupuesto actualizado con éxito' 
-                : 'Presupuesto creado con éxito'
-            ),
+            content: Text(_viewModel.isEditMode
+                ? 'Presupuesto actualizado correctamente'
+                : 'Presupuesto creado correctamente'),
             backgroundColor: Colors.green,
           ),
         );
-        
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
@@ -450,4 +510,3 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
     }
   }
 }
-

@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_proyecto_app/components/componentesUI_calculos.dart';
 import 'package:flutter_proyecto_app/models/calculos_viewmodel.dart';
-import 'package:flutter_proyecto_app/screens/calculos_screen/calculos_screen.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
 class ProyeccionesTab extends StatelessWidget {
+  const ProyeccionesTab({super.key});
+
   @override
   Widget build(BuildContext context) {
     final viewModel = Provider.of<CalculosFinancierosViewModel>(context);
@@ -15,33 +17,35 @@ class ProyeccionesTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          FinancialUIHelpers.buildSectionTitle('Proyección de Ahorro'),
+          ComponentesuiCalculos.buildSeccionTitulo('Proyeccion de ahorro'),
           const SizedBox(height: 16),
-          
-          FinancialUIHelpers.buildInputField(
-            label: 'Ingreso Mensual',
-            initialValue: viewModel.ingresoMensual.toString(),
+
+          ComponentesuiCalculos.buildCampos(
+            label: 'Ingreso mensual',
+            initialValue: viewModel.ingresoMensual.toStringAsFixed(2),
             onChanged: (value) {
-              viewModel.setIngresoMensual(double.tryParse(value) ?? viewModel.ingresoMensual);
+              viewModel.setIngresoMensual(
+                  double.tryParse(value) ?? viewModel.ingresoMensual);
             },
             prefixIcon: Icons.attach_money,
           ),
-          
+
           const SizedBox(height: 12),
-          
-          FinancialUIHelpers.buildInputField(
-            label: 'Gasto Mensual',
-            initialValue: viewModel.gastoMensual.toString(),
+
+          ComponentesuiCalculos.buildCampos(
+            label: 'Gasto mensual',
+            initialValue: viewModel.gastoMensual.toStringAsFixed(2),
             onChanged: (value) {
-              viewModel.setGastoMensual(double.tryParse(value) ?? viewModel.gastoMensual);
+              viewModel.setGastoMensual(
+                  double.tryParse(value) ?? viewModel.gastoMensual);
             },
             prefixIcon: Icons.shopping_cart,
           ),
-          
+
           const SizedBox(height: 12),
-          
-          FinancialUIHelpers.buildSliderField(
-            label: 'Meses de Proyección: ${viewModel.mesesProyeccion}',
+
+          ComponentesuiCalculos.buildCampoDeslizante(
+            label: 'Meses de proyeccion: ${viewModel.mesesProyeccion}',
             value: viewModel.mesesProyeccion.toDouble(),
             min: 3,
             max: 36,
@@ -49,9 +53,9 @@ class ProyeccionesTab extends StatelessWidget {
               viewModel.setMesesProyeccion(value.toInt());
             },
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
@@ -62,7 +66,7 @@ class ProyeccionesTab extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Ahorro Mensual Proyectado: \$${viewModel.ahorroMensual.toStringAsFixed(2)}',
+                  'Ahorro mensual proyectado: \$${viewModel.ahorroMensual.toStringAsFixed(2)}',
                   style: const TextStyle(
                     color: AppTheme.blanco,
                     fontSize: 18,
@@ -71,7 +75,7 @@ class ProyeccionesTab extends StatelessWidget {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'Ahorro Total en ${viewModel.mesesProyeccion} meses: \$${(viewModel.ahorroMensual * viewModel.mesesProyeccion).toStringAsFixed(2)}',
+                  'Ahorro total en ${viewModel.mesesProyeccion} meses: \$${(viewModel.ahorroMensual * viewModel.mesesProyeccion).toStringAsFixed(2)}',
                   style: const TextStyle(
                     color: AppTheme.naranja,
                     fontSize: 16,
@@ -81,21 +85,21 @@ class ProyeccionesTab extends StatelessWidget {
               ],
             ),
           ),
-          
+
           const SizedBox(height: 24),
-          
+
           const Text(
-            'Proyección por Mes',
+            'Proyeccion por mes',
             style: TextStyle(
               color: AppTheme.blanco,
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
           ),
-          
+
           const SizedBox(height: 12),
-          
-          // Tabla de proyecciones
+
+          //tabla de proyecciones
           Container(
             decoration: BoxDecoration(
               color: AppTheme.gris.withOpacity(0.3),
@@ -105,8 +109,8 @@ class ProyeccionesTab extends StatelessWidget {
               scrollDirection: Axis.horizontal,
               child: DataTable(
                 columnSpacing: 18,
-                headingRowColor: MaterialStateProperty.all(AppTheme.gris),
-                dataRowColor: MaterialStateProperty.all(Colors.transparent),
+                headingRowColor: WidgetStateProperty.all(AppTheme.gris),
+                dataRowColor: WidgetStateProperty.all(Colors.transparent),
                 columns: const [
                   DataColumn(
                     label: Text(
@@ -198,3 +202,4 @@ class ProyeccionesTab extends StatelessWidget {
     );
   }
 }
+

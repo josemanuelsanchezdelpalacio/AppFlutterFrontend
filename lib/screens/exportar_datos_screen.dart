@@ -8,8 +8,7 @@ import 'package:provider/provider.dart';
 class ExportarDatosScreen extends StatefulWidget {
   final int idUsuario;
 
-  const ExportarDatosScreen({Key? key, required this.idUsuario})
-      : super(key: key);
+  const ExportarDatosScreen({super.key, required this.idUsuario});
 
   @override
   State<ExportarDatosScreen> createState() => _ExportarDatosScreenState();
@@ -30,7 +29,7 @@ class _ExportarDatosScreenState extends State<ExportarDatosScreen> {
       value: viewModel,
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Exportar Datos'),
+          title: const Text('Exportar datos'),
           centerTitle: true,
           actions: [
             IconButton(
@@ -43,7 +42,6 @@ class _ExportarDatosScreenState extends State<ExportarDatosScreen> {
         drawer: MenuDesplegable(idUsuario: widget.idUsuario),
         body: Consumer<ExportarDatosViewmodel>(
           builder: (context, model, child) {
-            
             return SingleChildScrollView(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -63,10 +61,8 @@ class _ExportarDatosScreenState extends State<ExportarDatosScreen> {
             );
           },
         ),
-        bottomNavigationBar: CustomBottomNavBar(
-          idUsuario: widget.idUsuario, 
-          currentIndex: 0
-        ),
+        bottomNavigationBar:
+            CustomBottomNavBar(idUsuario: widget.idUsuario, currentIndex: 0),
       ),
     );
   }
@@ -255,8 +251,8 @@ class _ExportarDatosScreenState extends State<ExportarDatosScreen> {
     );
   }
 
-  Widget _buildBotonExportar(
-      String titulo, String subtitulo, IconData icono, VoidCallback? onPressed) {
+  Widget _buildBotonExportar(String titulo, String subtitulo, IconData icono,
+      VoidCallback? onPressed) {
     final isDisabled = onPressed == null;
 
     return ElevatedButton(
@@ -303,4 +299,3 @@ class _ExportarDatosScreenState extends State<ExportarDatosScreen> {
     );
   }
 }
-

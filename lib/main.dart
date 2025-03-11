@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_proyecto_app/screens/login_screen.dart';
+import 'package:flutter_proyecto_app/screens/add_transacciones_screen.dart';
+import 'package:flutter_proyecto_app/screens/auth_screens/login_screen.dart';
 import 'package:flutter_proyecto_app/screens/metas_ahorro_screen.dart';
-import 'package:flutter_proyecto_app/screens/registro_screen.dart';
+import 'package:flutter_proyecto_app/screens/auth_screens/registro_screen.dart';
 import 'package:flutter_proyecto_app/screens/home_screen.dart';
 import 'package:flutter_proyecto_app/screens/presupuestos_screen.dart';
-import 'package:flutter_proyecto_app/screens/add_transacciones_screen.dart';
 import 'package:flutter_proyecto_app/screens/add_metas_ahorro_screen.dart';
 import 'package:flutter_proyecto_app/screens/add_presupuestos_screen.dart';
-import 'package:flutter_proyecto_app/screens/calculos_screen/calculos_screen.dart';
+import 'package:flutter_proyecto_app/screens/calculos_screens/calculos_screen.dart';
 import 'package:flutter_proyecto_app/firebase_options.dart';
 import 'package:flutter_proyecto_app/screens/transacciones_screen.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
@@ -27,7 +27,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-  // Configurar la localización para español
+  //localizacion para español
   Intl.defaultLocale = 'es_ES';
   await initializeDateFormatting('es_ES', null);
 
@@ -35,15 +35,14 @@ void main() async {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Aplicación financiera',
+      title: 'Aplicacion financiera',
       theme: AppTheme.obtenerTema(),
       initialRoute: '/login',
-      
       localizationsDelegates: const [
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
@@ -69,7 +68,8 @@ class MyApp extends StatelessWidget {
         if (settings.arguments != null) {
           if (settings.arguments is int) {
             userId = settings.arguments as int;
-          } else if (settings.arguments is Map && (settings.arguments as Map).containsKey('userId')) {
+          } else if (settings.arguments is Map &&
+              (settings.arguments as Map).containsKey('userId')) {
             final arg = (settings.arguments as Map)['idUsuario'];
             if (arg is int) {
               userId = arg;
@@ -79,13 +79,17 @@ class MyApp extends StatelessWidget {
           }
         }
 
-        if (settings.name!.startsWith('/') && settings.name != '/login' && settings.name != '/register' && userId == null) {
+        if (settings.name!.startsWith('/') &&
+            settings.name != '/login' &&
+            settings.name != '/register' &&
+            userId == null) {
           return MaterialPageRoute(builder: (context) => const LoginScreen());
         }
 
         final Map<String, Widget Function(BuildContext)> rutas = {
           '/home': (context) => HomeScreen(idUsuario: userId!),
-          '/transacciones': (context) => TransaccionesScreen(idUsuario: userId!),
+          '/transacciones': (context) =>
+              TransaccionesScreen(idUsuario: userId!),
           '/metas': (context) => ChangeNotifierProvider(
                 create: (context) => MetasAhorroViewModel(userId!),
                 child: MetasAhorroScreen(idUsuario: userId!),
@@ -94,13 +98,16 @@ class MyApp extends StatelessWidget {
                 create: (context) => PresupuestosViewModel(userId!),
                 child: PresupuestosScreen(idUsuario: userId!),
               ),
-          '/add-transaccion': (context) => AddTransactionScreen(idUsuario: userId!),
+          '/add-transaccion': (context) =>
+              AddTransaccionesScreen(idUsuario: userId!),
           '/add-meta': (context) => AddMetasAhorroScreen(idUsuario: userId!),
-          '/add-presupuesto': (context) => AddPresupuestoScreen(idUsuario: userId!),
-          '/calculos': (context) => CalculosFinancierosScreen(idUsuario: userId!),
+          '/add-presupuesto': (context) =>
+              AddPresupuestoScreen(idUsuario: userId!),
+          '/calculos': (context) =>
+              CalculosFinancierosScreen(idUsuario: userId!),
           '/export-data': (context) => ExportarDatosScreen(idUsuario: userId!),
           '/login': (context) => const LoginScreen(),
-          '/register': (context) => const RegisterScreen(),
+          '/register': (context) => const RegistroScreen(),
         };
 
         if (rutas.containsKey(settings.name)) {

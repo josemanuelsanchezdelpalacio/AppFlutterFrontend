@@ -3,8 +3,8 @@ import 'package:flutter_proyecto_app/models/graficos_viewmodel.dart';
 import 'package:flutter_proyecto_app/screens/add_metas_ahorro_screen.dart';
 import 'package:flutter_proyecto_app/screens/add_presupuestos_screen.dart';
 import 'package:flutter_proyecto_app/screens/add_transacciones_screen.dart';
-import 'package:flutter_proyecto_app/screens/calculos_screen/calculos_screen.dart';
-import 'package:flutter_proyecto_app/screens/graficos_screen/graficos_screen.dart';
+import 'package:flutter_proyecto_app/screens/calculos_screens/calculos_screen.dart';
+import 'package:flutter_proyecto_app/screens/graficos_screens/graficos_screen.dart';
 import 'package:flutter_proyecto_app/screens/exportar_datos_screen.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +12,7 @@ import 'package:provider/provider.dart';
 class MenuDesplegable extends StatelessWidget {
   final int idUsuario;
 
-  const MenuDesplegable({Key? key, required this.idUsuario}) : super(key: key);
+  const MenuDesplegable({super.key, required this.idUsuario});
 
   @override
   Widget build(BuildContext context) {
@@ -68,20 +68,20 @@ class MenuDesplegable extends StatelessWidget {
           _buildMenuItem(
             icon: Icons.add_circle,
             title: 'Nueva Transacción',
-            onTap: () =>
-                _navigateTo(context, AddTransactionScreen(idUsuario: idUsuario)),
+            onTap: () => _navigateTo(
+                context, AddTransaccionesScreen(idUsuario: idUsuario)),
           ),
           _buildMenuItem(
             icon: Icons.add_chart,
             title: 'Nueva Meta de Ahorro',
-            onTap: () =>
-                _navigateTo(context, AddMetasAhorroScreen(idUsuario: idUsuario)),
+            onTap: () => _navigateTo(
+                context, AddMetasAhorroScreen(idUsuario: idUsuario)),
           ),
           _buildMenuItem(
             icon: Icons.add_card,
             title: 'Nuevo Presupuesto',
-            onTap: () =>
-                _navigateTo(context, AddPresupuestoScreen(idUsuario: idUsuario)),
+            onTap: () => _navigateTo(
+                context, AddPresupuestoScreen(idUsuario: idUsuario)),
           ),
           _buildMenuItem(
             icon: Icons.download,
