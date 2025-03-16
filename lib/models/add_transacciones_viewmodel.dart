@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_proyecto_app/data/transaccion.dart';
 import 'package:flutter_proyecto_app/services/transacciones_service.dart';
+import 'package:flutter_proyecto_app/data/categorias_data.dart'; // Importar el nuevo archivo
 
 class AddTransaccionesViewModel {
   final int idUsuario;
@@ -31,41 +32,9 @@ class AddTransaccionesViewModel {
 
   bool _isLoading = false;
 
-  //categorias predefinidas para gastos e ingresos
-  final List<String> categoriasGastos = [
-    'Alimentación',
-    'Transporte',
-    'Vivienda',
-    'Entretenimiento',
-    'Salud',
-    'Educación',
-    'Ropa',
-    'Servicios',
-    'Deudas',
-    'Otros',
-  ];
-
-  final List<String> categoriasIngresos = [
-    'Salario',
-    'Inversiones',
-    'Freelance',
-    'Regalo',
-    'Reembolso',
-    'Venta',
-    'Otros',
-  ];
-
-  // Categorías personalizadas
+  //categorias personalizadas
   final List<String> _categoriasPersonalizadasGastos = [];
   final List<String> _categoriasPersonalizadasIngresos = [];
-
-  final List<String> frecuencias = [
-    'Diaria',
-    'Semanal',
-    'Quincenal',
-    'Mensual',
-    'Anual',
-  ];
 
   TipoTransacciones get tipoTransaccion => _tipoTransaccion;
   String get categoria => _categoria;
@@ -76,23 +45,26 @@ class AddTransaccionesViewModel {
   bool get isLoading => _isLoading;
   bool get mostrarNuevaCategoria => _mostrarNuevaCategoria;
 
-  // Getters para categorías combinadas (predefinidas + personalizadas)
+  //getters para categorías combinadas (predefinidas + personalizadas)
   List<String> get todasCategoriasGastos => [
-        ...categoriasGastos,
+        ...CategoriasData.categoriasGastos,
         ..._categoriasPersonalizadasGastos,
         'Nueva categoría...'
       ];
+  
   List<String> get todasCategoriasIngresos => [
-        ...categoriasIngresos,
+        ...CategoriasData.categoriasIngresos,
         ..._categoriasPersonalizadasIngresos,
         'Nueva categoría...'
       ];
 
-  // Getter para obtener todas las categorías según el tipo de transacción
+  //getter para obtener todas las categorías según el tipo de transacción
   List<String> get categoriasPorTipo =>
-      _tipoTransaccion == TipoTransacciones.GASTO
-          ? todasCategoriasGastos
-          : todasCategoriasIngresos;
+      CategoriasData.getCategoriasPorTipo(
+        _tipoTransaccion, 
+        _categoriasPersonalizadasGastos, 
+        _categoriasPersonalizadasIngresos
+      );
 
   void setTipoTransaccion(TipoTransacciones tipo) {
     _tipoTransaccion = tipo;
@@ -147,12 +119,12 @@ class AddTransaccionesViewModel {
 
     if (_tipoTransaccion == TipoTransacciones.GASTO) {
       if (!_categoriasPersonalizadasGastos.contains(nuevaCategoria) &&
-          !categoriasGastos.contains(nuevaCategoria)) {
+          !CategoriasData.categoriasGastos.contains(nuevaCategoria)) {
         _categoriasPersonalizadasGastos.add(nuevaCategoria);
       }
     } else {
       if (!_categoriasPersonalizadasIngresos.contains(nuevaCategoria) &&
-          !categoriasIngresos.contains(nuevaCategoria)) {
+          !CategoriasData.categoriasIngresos.contains(nuevaCategoria)) {
         _categoriasPersonalizadasIngresos.add(nuevaCategoria);
       }
     }
@@ -178,14 +150,14 @@ class AddTransaccionesViewModel {
 
     //compruebo que la categoria de la transaccion exista en la lista correspondiente
     final categoriasDisponibles = _tipoTransaccion == TipoTransacciones.GASTO
-        ? categoriasGastos
-        : categoriasIngresos;
+        ? CategoriasData.categoriasGastos
+        : CategoriasData.categoriasIngresos;
 
     //si la categoria existe en la lista, la asignamos, sino la agregamos a las categorías personalizadas
     if (categoriasDisponibles.contains(transaccion.categoria)) {
       _categoria = transaccion.categoria;
     } else {
-      // Verificar si es una categoría personalizada existente
+      //compruebo si es una categoría personalizada existente
       final categoriasPersonalizadas =
           _tipoTransaccion == TipoTransacciones.GASTO
               ? _categoriasPersonalizadasGastos
@@ -194,7 +166,7 @@ class AddTransaccionesViewModel {
       if (categoriasPersonalizadas.contains(transaccion.categoria)) {
         _categoria = transaccion.categoria;
       } else {
-        // Si no existe en ninguna lista, la agregamos como categoría personalizada
+        //si no existe en ninguna lista, la agregamos como categoría personalizada
         if (_tipoTransaccion == TipoTransacciones.GASTO) {
           _categoriasPersonalizadasGastos.add(transaccion.categoria);
         } else {
@@ -210,7 +182,7 @@ class AddTransaccionesViewModel {
     //compruebo que la frecuencia de recurrencia sea valida
     if (transaccion.transaccionRecurrente &&
         transaccion.frecuenciaRecurrencia != null) {
-      if (frecuencias.contains(transaccion.frecuenciaRecurrencia)) {
+      if (CategoriasData.frecuencias.contains(transaccion.frecuenciaRecurrencia)) {
         _frecuenciaRecurrencia = transaccion.frecuenciaRecurrencia!;
       } else {
         _frecuenciaRecurrencia = 'Mensual';
@@ -275,3 +247,4 @@ class AddTransaccionesViewModel {
     }
   }
 }
+

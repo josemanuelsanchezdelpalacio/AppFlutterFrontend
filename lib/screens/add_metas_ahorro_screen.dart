@@ -24,6 +24,7 @@ class AddMetasAhorroScreen extends StatefulWidget {
 class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
   final _formKey = GlobalKey<FormState>();
   late AddMetasAhorroViewModel _viewModel;
+  bool mostrarCampoNuevaCategoria = false;
 
   @override
   void initState() {
@@ -32,6 +33,8 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
       idUsuario: widget.idUsuario,
       metaAhorroParaEditar: widget.metaAhorroParaEditar,
     );
+    // Verificar si necesitamos mostrar el campo de nueva categoría
+    mostrarCampoNuevaCategoria = _viewModel.categoriaController.text == 'Personalizada';
   }
 
   @override
@@ -135,7 +138,7 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                       margin: const EdgeInsets.only(bottom: 20),
                       decoration: BoxDecoration(
                         color: AppTheme.gris,
-                        borderRadius: BorderRadius.circular(8),
+                        borderRadius: BorderRadius.circular(12),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -143,8 +146,8 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            // Icono centrado (ahora naranja en vez de negro con fondo naranja)
-                            Icon(
+                            // Icono centrado
+                            const Icon(
                               Icons.savings,
                               color: AppTheme.naranja,
                               size: 48,
@@ -156,7 +159,7 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                                   ? 'Editar Meta de Ahorro'
                                   : 'Nueva Meta de Ahorro',
                               style: const TextStyle(
-                                fontSize: 18,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                                 color: AppTheme.blanco,
                               ),
@@ -168,7 +171,6 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: Colors.grey,
-                                fontSize: 14,
                               ),
                             ),
                           ],
@@ -179,132 +181,95 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                     // Nombre de la Meta de Ahorro
                     TextFormField(
                       controller: _viewModel.nombreController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Nombre de la Meta',
-                        prefixIcon: Icon(Icons.bookmark),
+                        prefixIcon: const Icon(Icons.bookmark),
                         hintText: 'Ej: Viaje a Paris, Nuevo Coche, etc.',
+                        filled: true,
+                        fillColor: AppTheme.gris,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
+                      style: const TextStyle(color: AppTheme.blanco),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]')),
+                      ],
                       validator: (value) {
                         if (value == null || value.trim().isEmpty) {
                           return 'Por favor ingresa un nombre para tu meta';
                         }
                         return null;
                       },
+                      textCapitalization: TextCapitalization.sentences,
                     ),
 
                     const SizedBox(height: 16),
 
-                    // Categoría
-                    Row(
-                      children: [
-                        Expanded(
-                          child: DropdownButtonFormField<String>(
-                            value: _viewModel.categoriaController.text.isEmpty
-                                ? _viewModel.categorias.first
-                                : _viewModel.categoriaController.text,
-                            decoration: const InputDecoration(
-                              labelText: 'Categoría',
-                              prefixIcon: Icon(Icons.category),
-                            ),
-                            dropdownColor: AppTheme.gris,
-                            items: _viewModel.categorias.map((categoria) {
-                              return DropdownMenuItem(
-                                value: categoria,
-                                child: Text(
-                                  categoria,
-                                  style:
-                                      const TextStyle(color: AppTheme.blanco),
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (value) {
-                              if (value != null) {
-                                setState(() {
-                                  _viewModel.categoriaController.text = value;
-                                  if (value == 'Personalizada') {
-                                    _viewModel.toggleCustomCategory(true);
-                                  } else {
-                                    _viewModel.toggleCustomCategory(false);
-                                  }
-                                });
-                              }
-                            },
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Por favor selecciona una categoría';
-                              }
-                              return null;
-                            },
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    // Campo de categoría personalizada
-                    if (_viewModel.isCustomCategory)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 16),
-                        child: TextFormField(
-                          controller:
-                              _viewModel.categoriaPersonalizadaController,
-                          decoration: const InputDecoration(
-                            labelText: 'Categoría Personalizada',
-                            prefixIcon: Icon(Icons.add_circle_outline),
-                            hintText: 'Ej: Educación, Navidad, Compras, etc.',
-                          ),
-                          // Permitir solo letras y espacios para la categoría personalizada
-                          inputFormatters: [
-                            FilteringTextInputFormatter.allow(
-                                RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ\s]')),
-                          ],
-                          validator: (value) {
-                            if (_viewModel.isCustomCategory &&
-                                (value == null || value.trim().isEmpty)) {
-                              return 'Por favor ingresa una categoría personalizada';
-                            }
-                            return null;
-                          },
-                        ),
-                      ),
+                    // Sección de categoría con dropdown
+                    _buildCategoriaDropdown(),
+                    
+                    // Sección para nueva categoría personalizada (solo si se selecciona)
+                    if (mostrarCampoNuevaCategoria) ...[
+                      const SizedBox(height: 16),
+                      _buildNuevaCategoriaInput(),
+                    ],
 
                     const SizedBox(height: 16),
 
                     // Cantidad Objetivo
                     TextFormField(
                       controller: _viewModel.cantidadObjetivoController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Cantidad Objetivo',
-                        prefixIcon: Icon(Icons.attach_money),
+                        prefixIcon: const Icon(Icons.attach_money),
+                        hintText: 'Ej: 1000.00',
+                        filled: true,
+                        fillColor: AppTheme.gris,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      // Mejorado para aceptar solo números con hasta 2 decimales
+                      style: const TextStyle(color: AppTheme.blanco),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+([.,]\d{0,2})?$')),
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          if (newValue.text.isEmpty) {
+                            return newValue;
+                          }
+
+                          if (newValue.text.contains('.')) {
+                            final parts = newValue.text.split('.');
+                            if (parts.length > 2) {
+                              return oldValue;
+                            }
+
+                            if (parts.length == 2 && parts[1].length > 2) {
+                              return TextEditingValue(
+                                text: '${parts[0]}.${parts[1].substring(0, 2)}',
+                                selection: TextSelection.collapsed(offset: parts[0].length + 3),
+                              );
+                            }
+                          }
+
+                          return newValue;
+                        }),
                       ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Por favor ingresa el monto objetivo';
                         }
 
-                        // Reemplazar coma por punto para conversión a double
-                        final normalizedValue = value.replaceAll(',', '.');
-                        final amount = double.tryParse(normalizedValue);
+                        final amount = double.tryParse(value);
 
                         if (amount == null || amount <= 0) {
                           return 'Ingresa un monto válido mayor a 0';
                         }
                         return null;
-                      },
-                      // Formatea el texto para mostrar correctamente al usuario
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                          final normalizedValue = value.replaceAll(',', '.');
-                          if (double.tryParse(normalizedValue) != null) {
-                            // No hacemos nada, el valor es válido
-                          }
-                        }
                       },
                     ),
 
@@ -313,110 +278,139 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                     // Cantidad Actual
                     TextFormField(
                       controller: _viewModel.cantidadActualController,
-                      decoration: const InputDecoration(
+                      decoration: InputDecoration(
                         labelText: 'Cantidad Actual',
-                        prefixIcon: Icon(Icons.attach_money),
+                        prefixIcon: const Icon(Icons.attach_money),
                         hintText: '0.00',
+                        filled: true,
+                        fillColor: AppTheme.gris,
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
                       ),
-                      keyboardType:
-                          const TextInputType.numberWithOptions(decimal: true),
-                      // Mejorado para aceptar solo números con hasta 2 decimales
+                      style: const TextStyle(color: AppTheme.blanco),
+                      keyboardType: const TextInputType.numberWithOptions(decimal: true),
                       inputFormatters: [
-                        FilteringTextInputFormatter.allow(
-                            RegExp(r'^\d+([.,]\d{0,2})?$')),
+                        FilteringTextInputFormatter.allow(RegExp(r'^\d+\.?\d{0,2}')),
+                        TextInputFormatter.withFunction((oldValue, newValue) {
+                          if (newValue.text.isEmpty) {
+                            return newValue;
+                          }
+
+                          if (newValue.text.contains('.')) {
+                            final parts = newValue.text.split('.');
+                            if (parts.length > 2) {
+                              return oldValue;
+                            }
+
+                            if (parts.length == 2 && parts[1].length > 2) {
+                              return TextEditingValue(
+                                text: '${parts[0]}.${parts[1].substring(0, 2)}',
+                                selection: TextSelection.collapsed(offset: parts[0].length + 3),
+                              );
+                            }
+                          }
+
+                          return newValue;
+                        }),
                       ],
                       validator: (value) {
                         if (value == null || value.isEmpty) {
                           return 'Por favor ingresa la cantidad actual';
                         }
 
-                        // Reemplazar coma por punto para conversión a double
-                        final normalizedValue = value.replaceAll(',', '.');
-                        final amount = double.tryParse(normalizedValue);
+                        final amount = double.tryParse(value);
 
                         if (amount == null || amount < 0) {
                           return 'Ingresa un monto válido (puede ser 0)';
                         }
                         return null;
                       },
-                      // Formatea el texto para mostrar correctamente al usuario
-                      onChanged: (value) {
-                        if (value.isNotEmpty) {
-                          final normalizedValue = value.replaceAll(',', '.');
-                          if (double.tryParse(normalizedValue) != null) {
-                            // No hacemos nada, el valor es válido
-                          }
-                        }
-                      },
                     ),
 
                     const SizedBox(height: 16),
 
-                    // Fecha Objetivo
-                    InkWell(
-                      onTap: () => _selectDate(context),
-                      child: InputDecorator(
-                        decoration: const InputDecoration(
-                          labelText: 'Fecha Objetivo',
-                          prefixIcon: Icon(Icons.calendar_today),
+                    // Fecha Objetivo - Usar un selector de fecha similar al de presupuestos
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        const Text(
+                          'Fecha objetivo',
+                          style: TextStyle(
+                            color: AppTheme.blanco,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              DateFormat('dd/MM/yyyy')
-                                  .format(_viewModel.fechaObjetivo),
-                              style: const TextStyle(color: AppTheme.blanco),
+                        const SizedBox(height: 8),
+                        InkWell(
+                          onTap: () => _selectDate(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppTheme.gris,
+                              borderRadius: BorderRadius.circular(12),
                             ),
-                            const Icon(
-                              Icons.arrow_drop_down,
-                              color: AppTheme.naranja,
+                            child: Row(
+                              children: [
+                                const Icon(Icons.calendar_today,
+                                    color: AppTheme.naranja, size: 16),
+                                const SizedBox(width: 8),
+                                Text(
+                                  DateFormat('dd/MM/yyyy').format(_viewModel.fechaObjetivo),
+                                  style: const TextStyle(
+                                    color: AppTheme.blanco,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                         ),
-                      ),
+                      ],
                     ),
 
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 32),
 
                     // Mensaje de error
-                    if (_viewModel.errorMessage != null)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 16),
-                        child: Text(
-                          _viewModel.errorMessage!,
-                          style: const TextStyle(color: Colors.red),
-                          textAlign: TextAlign.center,
-                        ),
+                    if (_viewModel.errorMessage != null) ...[
+                      Text(
+                        _viewModel.errorMessage!,
+                        style: const TextStyle(color: Colors.red),
+                        textAlign: TextAlign.center,
                       ),
+                      const SizedBox(height: 16),
+                    ],
 
                     // Botón guardar
                     ElevatedButton(
-                      onPressed:
-                          _viewModel.isLoading ? null : _guardarMetaAhorro,
+                      onPressed: _viewModel.isLoading ? null : _guardarMetaAhorro,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppTheme.naranja,
                         padding: const EdgeInsets.symmetric(vertical: 16),
-                        disabledBackgroundColor:
-                            AppTheme.naranja.withOpacity(0.5),
+                        backgroundColor: AppTheme.naranja,
+                        foregroundColor: AppTheme.colorFondo,
+                        disabledBackgroundColor: AppTheme.naranja.withOpacity(0.5),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
                       ),
                       child: _viewModel.isLoading
                           ? const SizedBox(
                               height: 20,
                               width: 20,
                               child: CircularProgressIndicator(
-                                color: AppTheme.blanco,
+                                color: AppTheme.colorFondo,
                                 strokeWidth: 3,
                               ),
                             )
                           : Text(
                               _viewModel.isEditing
-                                  ? 'ACTUALIZAR META DE AHORRO'
-                                  : 'GUARDAR META DE AHORRO',
+                                  ? 'Actualizar meta de ahorro'
+                                  : 'Guardar meta de ahorro',
                               style: const TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.black,
                               ),
                             ),
                     ),
@@ -433,4 +427,198 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
       ),
     );
   }
+
+  Widget _buildCategoriaDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: AppTheme.gris,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              labelText: 'Categoría',
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 8),
+            ),
+            value: _viewModel.categorias.contains(_viewModel.categoriaController.text)
+                ? _viewModel.categoriaController.text
+                : _viewModel.categorias.first,
+            dropdownColor: AppTheme.gris,
+            style: const TextStyle(color: AppTheme.blanco),
+            icon: const Icon(Icons.arrow_drop_down, color: AppTheme.naranja),
+            items: _viewModel.categorias.map((String categoria) {
+              return DropdownMenuItem<String>(
+                value: categoria,
+                child: Text(
+                  categoria,
+                  style: TextStyle(
+                    fontStyle: categoria == 'Personalizada'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              if (newValue != null) {
+                setState(() {
+                  _viewModel.categoriaController.text = newValue;
+                  mostrarCampoNuevaCategoria = (newValue == 'Personalizada');
+                  
+                  if (newValue != 'Personalizada') {
+                    // Si no es personalizada, asegurarse de que el ViewModel lo sepa
+                    _viewModel.toggleCustomCategory(false);
+                  }
+                });
+              }
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor selecciona una categoría';
+              }
+              return null;
+            },
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (!mostrarCampoNuevaCategoria)
+          OutlinedButton.icon(
+            onPressed: () {
+              setState(() {
+                _viewModel.categoriaController.text = 'Personalizada';
+                mostrarCampoNuevaCategoria = true;
+                _viewModel.toggleCustomCategory(true);
+              });
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppTheme.naranja,
+              side: BorderSide(color: AppTheme.naranja.withOpacity(0.5)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: const Icon(Icons.add_circle_outline),
+            label: const Text('Añadir nueva categoría'),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildNuevaCategoriaInput() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.gris.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.naranja.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Nueva categoría personalizada',
+            style: TextStyle(
+              color: AppTheme.blanco,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _viewModel.nuevaCategoriaController,
+            decoration: InputDecoration(
+              labelText: 'Nombre de la categoría',
+              prefixIcon: const Icon(Icons.create_new_folder_outlined),
+              hintText: 'Ej: Mascotas, Aficiones, etc.',
+              filled: true,
+              fillColor: AppTheme.gris,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                  RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]')),
+            ],
+            style: const TextStyle(color: AppTheme.blanco),
+            validator: mostrarCampoNuevaCategoria
+                ? (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Ingresa un nombre para la categoría';
+                    }
+                    return null;
+                  }
+                : null,
+            textCapitalization: TextCapitalization.sentences,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    final nuevaCategoria =
+                        _viewModel.nuevaCategoriaController.text.trim();
+                    if (nuevaCategoria.isNotEmpty) {
+                      setState(() {
+                        // Añadir la nueva categoría y seleccionarla
+                        _viewModel.addNewCategory(nuevaCategoria);
+                        mostrarCampoNuevaCategoria = false;
+                        
+                        // Si estamos en modo de edición, asignar la categoría al controlador correspondiente
+                        if (_viewModel.isEditing) {
+                          _viewModel.categoriaPersonalizadaController.text = nuevaCategoria;
+                        }
+                      });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.naranja,
+                    foregroundColor: AppTheme.colorFondo,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  icon: const Icon(Icons.add),
+                  label: const Text(
+                    'Agregar categoría',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _viewModel.categoriaController.text = 
+                        _viewModel.categorias.first;  // Reset to default category
+                    _viewModel.nuevaCategoriaController.clear();
+                    mostrarCampoNuevaCategoria = false;
+                    _viewModel.toggleCustomCategory(false);
+                  });
+                },
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.grey.withOpacity(0.2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
+

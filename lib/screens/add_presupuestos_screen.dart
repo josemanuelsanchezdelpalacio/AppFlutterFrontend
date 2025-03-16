@@ -178,102 +178,166 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
   }
 
   Widget _buildCategoriaDropdown() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12),
-      decoration: BoxDecoration(
-        color: AppTheme.gris,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: DropdownButtonFormField<String>(
-        decoration: const InputDecoration(
-          labelText: 'Categoria',
-          border: InputBorder.none,
-          contentPadding: EdgeInsets.symmetric(vertical: 8),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: AppTheme.gris,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              labelText: 'Categoría',
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 8),
+            ),
+            value: _viewModel.categorias.contains(_viewModel.categoriaSeleccionada)
+                ? _viewModel.categoriaSeleccionada
+                : _viewModel.categorias.first,
+            dropdownColor: AppTheme.gris,
+            style: const TextStyle(color: AppTheme.blanco),
+            icon: const Icon(Icons.arrow_drop_down, color: AppTheme.naranja),
+            items: _viewModel.categorias.map((String categoria) {
+              return DropdownMenuItem<String>(
+                value: categoria,
+                child: Text(
+                  categoria,
+                  style: TextStyle(
+                    fontStyle: categoria == 'Personalizada'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              if (newValue != null) {
+                setState(() {
+                  _viewModel.categoriaSeleccionada = newValue;
+                });
+              }
+            },
+            validator: (value) => _viewModel.validarCategoria(value),
+          ),
         ),
-
-        //aseguro de que los valores siempre sea uno de los valores de la lista
-        value: _viewModel.categorias.contains(_viewModel.categoriaSeleccionada)
-            ? _viewModel.categoriaSeleccionada
-            : _viewModel.categorias.first,
-        dropdownColor: AppTheme.gris,
-        style: const TextStyle(color: AppTheme.blanco),
-        icon: const Icon(Icons.arrow_drop_down, color: AppTheme.naranja),
-        items: _viewModel.categorias.map((String categoria) {
-          return DropdownMenuItem<String>(
-            value: categoria,
-            child: Text(
-              categoria,
-              style: TextStyle(
-                fontStyle: categoria == 'Agregar categoría personalizada...'
-                    ? FontStyle.italic
-                    : FontStyle.normal,
+        const SizedBox(height: 8),
+        if (!_viewModel.mostrarCampoNuevaCategoria)
+          OutlinedButton.icon(
+            onPressed: () {
+              setState(() {
+                _viewModel.categoriaSeleccionada = 'Personalizada';
+              });
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppTheme.naranja,
+              side: BorderSide(color: AppTheme.naranja.withOpacity(0.5)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
               ),
             ),
-          );
-        }).toList(),
-        onChanged: (String? newValue) {
-          if (newValue != null) {
-            setState(() {
-              _viewModel.categoriaSeleccionada = newValue;
-            });
-          }
-        },
-        validator: (value) => _viewModel.validarCategoria(value),
-      ),
+            icon: const Icon(Icons.add_circle_outline),
+            label: const Text('Añadir nueva categoría'),
+          ),
+      ],
     );
   }
 
   Widget _buildNuevaCategoriaInput() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        TextFormField(
-          controller: _viewModel.nuevaCategoriaController,
-          decoration: InputDecoration(
-            labelText: 'Nueva categoría personalizada',
-            prefixIcon: const Icon(Icons.create_new_folder_outlined),
-            hintText: 'Ej: Mascotas, Aficiones, etc.',
-            filled: true,
-            fillColor: AppTheme.gris,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.gris.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.naranja.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Nueva categoría personalizada',
+            style: TextStyle(
+              color: AppTheme.blanco,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
             ),
           ),
-          inputFormatters: [
-            FilteringTextInputFormatter.allow(
-                RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]')),
-          ],
-          style: const TextStyle(color: AppTheme.blanco),
-          validator: _viewModel.mostrarCampoNuevaCategoria
-              ? (value) => _viewModel.validarNuevaCategoria(value)
-              : null,
-          textCapitalization: TextCapitalization.sentences,
-        ),
-        const SizedBox(height: 8),
-        ElevatedButton.icon(
-          onPressed: () {
-            final nuevaCategoria =
-                _viewModel.nuevaCategoriaController.text.trim();
-            if (nuevaCategoria.isNotEmpty) {
-              _viewModel.agregarCategoriaPersonalizada(nuevaCategoria);
-            }
-          },
-          style: ElevatedButton.styleFrom(
-            backgroundColor: AppTheme.naranja,
-            foregroundColor: AppTheme.colorFondo,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _viewModel.nuevaCategoriaController,
+            decoration: InputDecoration(
+              labelText: 'Nombre de la categoría',
+              prefixIcon: const Icon(Icons.create_new_folder_outlined),
+              hintText: 'Ej: Mascotas, Aficiones, etc.',
+              filled: true,
+              fillColor: AppTheme.gris,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
             ),
-            padding: const EdgeInsets.symmetric(vertical: 12),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                  RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]')),
+            ],
+            style: const TextStyle(color: AppTheme.blanco),
+            validator: _viewModel.mostrarCampoNuevaCategoria
+                ? (value) => _viewModel.validarNuevaCategoria(value)
+                : null,
+            textCapitalization: TextCapitalization.sentences,
           ),
-          icon: const Icon(Icons.add),
-          label: const Text(
-            'Agregar categoría',
-            style: TextStyle(fontWeight: FontWeight.bold),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    final nuevaCategoria =
+                        _viewModel.nuevaCategoriaController.text.trim();
+                    if (nuevaCategoria.isNotEmpty) {
+                      _viewModel.agregarCategoriaPersonalizada(nuevaCategoria);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.naranja,
+                    foregroundColor: AppTheme.colorFondo,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  icon: const Icon(Icons.add),
+                  label: const Text(
+                    'Agregar categoría',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _viewModel.categoriaSeleccionada = 
+                        _viewModel.categorias.first;  // Reset to default category
+                    _viewModel.nuevaCategoriaController.clear();
+                  });
+                },
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.grey.withOpacity(0.2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
@@ -436,6 +500,7 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
       } else {
         _viewModel.actualizarFechaFin(picked);
       }
+      setState(() {});
     }
   }
 
@@ -510,3 +575,4 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
     }
   }
 }
+

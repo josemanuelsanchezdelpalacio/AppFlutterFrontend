@@ -26,7 +26,7 @@ class Transaccion {
   factory Transaccion.fromJson(Map<String, dynamic> json) {
     return Transaccion(
       id: json['id'],
-      cantidad: json['cantidad']?.toDouble() ?? 0.0,
+      cantidad: json['cantidad']?.toDouble() ?? json['cantidad']?.toDouble() ?? 0.0,
       descripcion: json['descripcion'],
       tipoTransaccion: TipoTransacciones.values.firstWhere(
         (e) => e.toString() == 'TipoTransacciones.${json['tipoTransaccion']}',

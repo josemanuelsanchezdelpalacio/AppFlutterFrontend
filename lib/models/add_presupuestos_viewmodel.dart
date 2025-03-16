@@ -1,62 +1,51 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_proyecto_app/data/categorias_data.dart';
 import 'package:flutter_proyecto_app/data/presupuesto.dart';
 import 'package:flutter_proyecto_app/services/presupuestos_service.dart';
 
 class AddPresupuestoViewModel {
-  AddPresupuestoViewModel(
-      {required this.idUsuario,
-      this.presupuestoParaEditar,
-      required this.onStateChanged});
+  AddPresupuestoViewModel({
+    required this.idUsuario,
+    this.presupuestoParaEditar,
+    required this.onStateChanged,
+  });
 
-  //campos y servicio
+  // Campos y servicio
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final PresupuestosService _presupuestoService = PresupuestosService();
 
-  //variables para el id del usuario y contexto de edicion
+  // Variables para el id del usuario y contexto de edición
   final int idUsuario;
   final Presupuesto? presupuestoParaEditar;
   final VoidCallback onStateChanged;
 
-  //controladores para los campos
+  // Controladores para los campos
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController cantidadController = TextEditingController();
-  final TextEditingController nuevaCategoriaController =
-      TextEditingController();
+  final TextEditingController nuevaCategoriaController = TextEditingController();
 
-  //estado del formulario
+  // Estado del formulario
   bool isLoading = false;
   String errorMessage = '';
   bool isEditMode = false;
   int? presupuestoId;
   bool mostrarCampoNuevaCategoria = false;
 
-  //opciones del desplegable de categorias
-  final List<String> categoriasPredefinidas = [
-    'Alimentación',
-    'Transporte',
-    'Vivienda',
-    'Entretenimiento',
-    'Salud',
-    'Educación',
-    'Ropa',
-    'Servicios',
-    'Deudas',
-    'Otros',
-    'Personalizada'
-  ];
+  // Usar categorías predefinidas de CategoriasData
+  final List<String> categoriasPredefinidas = CategoriasData.categoriasGastos;
 
   final List<String> _categoriasPersonalizadas = [];
 
   List<String> get categorias {
     return [
-      ...categoriasPredefinidas.sublist(0, categoriasPredefinidas.length - 1),
+      ...categoriasPredefinidas,
       ..._categoriasPersonalizadas,
       'Personalizada'
     ];
   }
 
-  //variables de estado
-  String _categoriaSeleccionada = 'Alimentación';
+  // Variables de estado
+  String _categoriaSeleccionada = CategoriasData.categoriasGastos.first;
   DateTime _fechaInicio = DateTime.now();
   DateTime _fechaFin = DateTime.now().add(const Duration(days: 30));
   double _cantidadGastada = 0.0;
@@ -69,13 +58,12 @@ class AddPresupuestoViewModel {
   set categoriaSeleccionada(String categoria) {
     _categoriaSeleccionada = categoria;
 
-    mostrarCampoNuevaCategoria =
-        (categoria == 'Personalizada');
+    mostrarCampoNuevaCategoria = (categoria == 'Personalizada');
 
     onStateChanged();
   }
 
-  //metodo para agregar una nueva categoria personalizada
+  // Método para agregar una nueva categoría personalizada
   void agregarCategoriaPersonalizada(String nuevaCategoria) {
     if (nuevaCategoria.isNotEmpty &&
         !_categoriasPersonalizadas.contains(nuevaCategoria) &&
@@ -88,19 +76,19 @@ class AddPresupuestoViewModel {
     }
   }
 
-  //metodo para inicializar los campos con datos del presupuesto existente si estamos editando
+  // Método para inicializar los campos con datos del presupuesto existente si estamos editando
   void inicializarFormulario() {
     if (presupuestoParaEditar != null) {
       final presupuesto = presupuestoParaEditar!;
       isEditMode = true;
       presupuestoId = presupuesto.id;
 
-      //relleno todos los campos
+      // Relleno todos los campos
       nombreController.text = presupuesto.nombre ?? '';
       cantidadController.text = presupuesto.cantidad.toString();
 
-      //corrigo el problema de codificacion para la categoria
-      //compruebo si la categoria existe en la lista de categorias
+      // Corrigo el problema de codificación para la categoría
+      // Compruebo si la categoría existe en la lista de categorías
       final categoriaNormalizada = _normalizarCategoria(presupuesto.categoria);
 
       // Si la categoría no está en las predefinidas, la agregamos a las personalizadas
@@ -113,7 +101,7 @@ class AddPresupuestoViewModel {
       if (categorias.contains(categoriaNormalizada)) {
         _categoriaSeleccionada = categoriaNormalizada;
       } else {
-        //si no se encuentra uso el primer valor por defecto
+        // Si no se encuentra uso el primer valor por defecto
         _categoriaSeleccionada = categorias.first;
       }
 
@@ -123,9 +111,9 @@ class AddPresupuestoViewModel {
     }
   }
 
-  //metodo para normalizar la categoria (corrige problemas de codificacion)
+  // Método para normalizar la categoría (corrige problemas de codificación)
   String _normalizarCategoria(String categoria) {
-    //mapeo de posibles categorias con problemas de codificacion
+    // Mapeo de posibles categorías con problemas de codificación
     final Map<String, String> mapeoCategoriasCorrectas = {
       'AlimentaciÃ³n': 'Alimentación',
       'EducaciÃ³n': 'Educación',
@@ -135,17 +123,17 @@ class AddPresupuestoViewModel {
     return mapeoCategoriasCorrectas[categoria] ?? categoria;
   }
 
-  //libero recursos
+  // Libero recursos
   void dispose() {
     nombreController.dispose();
     cantidadController.dispose();
     nuevaCategoriaController.dispose();
   }
 
-  //metodo para actualizar las fechas
+  // Método para actualizar las fechas
   void actualizarFechaInicio(DateTime fecha) {
     _fechaInicio = fecha;
-    //aseguro que la fecha de fin no sea anterior a la de inicio
+    // Aseguro que la fecha de fin no sea anterior a la de inicio
     if (_fechaInicio.isAfter(_fechaFin)) {
       _fechaFin = _fechaInicio.add(const Duration(days: 1));
     }
@@ -157,7 +145,7 @@ class AddPresupuestoViewModel {
     onStateChanged();
   }
 
-  // metodos de validacion
+  // Métodos de validación
   String? validarNombre(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Por favor ingresa un nombre para el presupuesto';
@@ -173,7 +161,7 @@ class AddPresupuestoViewModel {
       return 'Ingresa una cantidad';
     }
 
-    //reemplazo coma con punto para el analisis
+    // Reemplazo coma con punto para el análisis
     final valorNumerico = value.replaceAll(',', '.');
 
     try {
@@ -182,12 +170,12 @@ class AddPresupuestoViewModel {
         return 'La cantidad debe ser mayor a 0';
       }
 
-      // validacion adicional para modo de edicion
+      // Validación adicional para modo de edición
       if (isEditMode && cantidad < _cantidadGastada) {
         return 'La cantidad debe ser mayor o igual a lo ya gastado (\$${_cantidadGastada.toStringAsFixed(2)})';
       }
     } catch (e) {
-      return 'Ingresa una cantidad valida';
+      return 'Ingresa una cantidad válida';
     }
 
     return null;
@@ -210,7 +198,7 @@ class AddPresupuestoViewModel {
     return null;
   }
 
-  //metodo para guardar presupuesto
+  // Método para guardar presupuesto
   Future<bool> guardarPresupuesto() async {
     // Verificar si se está intentando guardar con "Agregar categoría personalizada..." seleccionada
     if (_categoriaSeleccionada == 'Agregar categoría personalizada...') {
@@ -225,11 +213,11 @@ class AddPresupuestoViewModel {
         errorMessage = '';
         onStateChanged();
 
-        //analizo la cantidad del presupuesto
+        // Analizo la cantidad del presupuesto
         final double cantidad =
             double.parse(cantidadController.text.replaceAll(',', '.'));
 
-        //creo el objeto de presupuesto
+        // Creo el objeto de presupuesto
         final presupuesto = Presupuesto(
           id: isEditMode ? presupuestoId : null,
           nombre: nombreController.text.trim(),
@@ -241,7 +229,7 @@ class AddPresupuestoViewModel {
           cantidadRestante: cantidad - (isEditMode ? _cantidadGastada : 0.0),
         );
 
-        //envio los datos al servidor
+        // Envío los datos al servidor
         if (isEditMode && presupuestoId != null) {
           await _presupuestoService.actualizarPresupuesto(
               idUsuario, presupuestoId!, presupuesto);
@@ -249,7 +237,7 @@ class AddPresupuestoViewModel {
           await _presupuestoService.crearPresupuesto(idUsuario, presupuesto);
         }
 
-        //reinicio formulario si se esta creando un nuevo presupuesto
+        // Reinicio formulario si se está creando un nuevo presupuesto
         if (!isEditMode) {
           nombreController.clear();
           cantidadController.clear();

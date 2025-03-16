@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_proyecto_app/data/categorias_data.dart';
 import 'package:flutter_proyecto_app/data/metas_ahorro.dart';
 import 'package:flutter_proyecto_app/services/metas_ahorro_service.dart';
 
@@ -7,11 +8,12 @@ class AddMetasAhorroViewModel {
   final MetaAhorro? metaAhorroParaEditar;
   final MetasAhorroService _metasAhorroService = MetasAhorroService();
 
-  //controladores para los campos
+  // Controladores para los campos
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController categoriaController = TextEditingController();
   final TextEditingController categoriaPersonalizadaController =
       TextEditingController();
+  final TextEditingController nuevaCategoriaController = TextEditingController();
   final TextEditingController cantidadObjetivoController =
       TextEditingController();
   final TextEditingController cantidadActualController =
@@ -23,18 +25,10 @@ class AddMetasAhorroViewModel {
   bool _isEditing = false;
   int? _metaId;
   bool _isCustomCategory = false;
+  bool mostrarCampoNuevaCategoria = false;
 
-  //lista de categorias para las metas
-  final List<String> categoriasPredefinidas = [
-    'Salario',
-    'Inversiones',
-    'Freelance',
-    'Regalo',
-    'Reembolso',
-    'Venta',
-    'Otros',
-    'Personalizada',
-  ];
+  // Usar categorías predefinidas de ingresos de CategoriasData
+  List<String> categoriasPredefinidas = CategoriasData.categoriasIngresos;
 
   AddMetasAhorroViewModel({
     required this.idUsuario,
@@ -48,7 +42,7 @@ class AddMetasAhorroViewModel {
   bool get isEditing => _isEditing;
   DateTime get fechaObjetivo => _fechaObjetivo;
   bool get isCustomCategory => _isCustomCategory;
-  List<String> get categorias => categoriasPredefinidas;
+  List<String> get categorias => [...categoriasPredefinidas, 'Personalizada'];
 
   void _inicializar() {
     if (metaAhorroParaEditar != null) {
@@ -56,13 +50,12 @@ class AddMetasAhorroViewModel {
       _metaId = metaAhorroParaEditar!.id;
       nombreController.text = metaAhorroParaEditar!.nombre;
 
-      //determino si es una categoria personalizada
-      if (!categoriasPredefinidas
-          .sublist(0, categoriasPredefinidas.length - 1)
-          .contains(metaAhorroParaEditar!.categoria)) {
+      // Determino si es una categoría personalizada
+      if (!categoriasPredefinidas.contains(metaAhorroParaEditar!.categoria)) {
         _isCustomCategory = true;
         categoriaPersonalizadaController.text = metaAhorroParaEditar!.categoria;
         categoriaController.text = 'Personalizada';
+        mostrarCampoNuevaCategoria = true;
       } else {
         categoriaController.text = metaAhorroParaEditar!.categoria;
       }
@@ -73,14 +66,14 @@ class AddMetasAhorroViewModel {
           metaAhorroParaEditar!.cantidadActual.toString();
       _fechaObjetivo = metaAhorroParaEditar!.fechaObjetivo;
     } else {
-      //inicializo para una nueva meta con valores por defecto
+      // Inicializo para una nueva meta con valores por defecto
       nombreController.text = '';
       categoriaController.text = categoriasPredefinidas.first;
       cantidadActualController.text = '0.0';
     }
   }
 
-  //metodos para actualizar el estado
+  // Métodos para actualizar el estado
   void setLoading(bool loading) {
     _isLoading = loading;
   }
@@ -93,7 +86,20 @@ class AddMetasAhorroViewModel {
     _isCustomCategory = value;
   }
 
-  //reseteo el formulario para nueva entrada
+  void agregarCategoriaPersonalizada(String nuevaCategoria) {
+    if (nuevaCategoria.isNotEmpty && !categoriasPredefinidas.contains(nuevaCategoria)) {
+      categoriasPredefinidas.add(nuevaCategoria);
+      categoriaController.text = nuevaCategoria;
+      _isCustomCategory = false;
+      nuevaCategoriaController.clear();
+    }
+  }
+
+  void addNewCategory(String newCategory) {
+    agregarCategoriaPersonalizada(newCategory);
+  }
+
+  // Reseteo el formulario para nueva entrada
   void resetForm() {
     nombreController.text = '';
     categoriaController.text = categoriasPredefinidas.first;
@@ -103,23 +109,26 @@ class AddMetasAhorroViewModel {
     _fechaObjetivo = DateTime.now().add(const Duration(days: 30));
     _errorMessage = null;
     _isCustomCategory = false;
+    mostrarCampoNuevaCategoria = false;
   }
 
-  //metodo para guardar la meta de ahorro
+  // Método para guardar la meta de ahorro
   Future<String> guardarMetaAhorro() async {
     _errorMessage = null;
 
     try {
-      //validacion del nombre
+      // Validación del nombre
       if (nombreController.text.trim().isEmpty) {
         throw Exception('El nombre de la meta no puede estar vacío');
       }
 
-      //determino la categoria final
-      final categoria =
-          _isCustomCategory && categoriaPersonalizadaController.text.isNotEmpty
+      // Determino la categoría final
+      final categoria = _isCustomCategory && mostrarCampoNuevaCategoria && 
+                      nuevaCategoriaController.text.isNotEmpty
+          ? nuevaCategoriaController.text.trim()
+          : (_isCustomCategory && categoriaPersonalizadaController.text.isNotEmpty
               ? categoriaPersonalizadaController.text.trim()
-              : categoriaController.text.trim();
+              : categoriaController.text.trim());
 
       final metaAhorro = MetaAhorro(
         id: _isEditing ? _metaId : null,
@@ -136,12 +145,12 @@ class AddMetasAhorroViewModel {
       );
 
       if (_isEditing) {
-        //actualizo la meta existente
+        // Actualizo la meta existente
         await _metasAhorroService.actualizarMetaAhorro(
             idUsuario, metaAhorro.id!, metaAhorro);
         return 'Meta de ahorro actualizada correctamente';
       } else {
-        //creo una nueva meta
+        // Creo una nueva meta
         await _metasAhorroService.crearMetaAhorro(idUsuario, metaAhorro);
         return 'Meta de ahorro creada correctamente';
       }
@@ -152,13 +161,13 @@ class AddMetasAhorroViewModel {
     }
   }
 
-  //libero recursos
+  // Libero recursos
   void dispose() {
     nombreController.dispose();
     categoriaController.dispose();
     categoriaPersonalizadaController.dispose();
+    nuevaCategoriaController.dispose();
     cantidadObjetivoController.dispose();
     cantidadActualController.dispose();
   }
 }
-
