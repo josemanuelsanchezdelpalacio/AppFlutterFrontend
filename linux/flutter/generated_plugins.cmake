@@ -6,8 +6,11 @@ list(APPEND FLUTTER_PLUGIN_LIST
   file_saver
   file_selector_linux
   flutter_localization
+<<<<<<< HEAD
   flutter_timezone
   local_notifier
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   url_launcher_linux
 )
 

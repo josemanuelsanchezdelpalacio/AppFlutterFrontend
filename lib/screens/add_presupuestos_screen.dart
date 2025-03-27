@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+<<<<<<< HEAD
 import 'package:flutter_proyecto_app/components/barra_inferior_secciones.dart';
 import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
 import 'package:flutter_proyecto_app/data/categorias_data.dart';
+=======
+import 'package:flutter_proyecto_app/components/custom_bottom_app_bar.dart';
+import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/data/presupuesto.dart';
 import 'package:flutter_proyecto_app/models/add_presupuestos_viewmodel.dart';
 import 'package:flutter_proyecto_app/screens/presupuestos_screen.dart';
@@ -25,14 +30,18 @@ class AddPresupuestoScreen extends StatefulWidget {
 
 class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
   late AddPresupuestoViewModel _viewModel;
+<<<<<<< HEAD
   final TextEditingController _categoriaController = TextEditingController();
   final FocusNode _categoriaFocusNode = FocusNode();
   bool _isCustomCategory = false;
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 
   @override
   void initState() {
     super.initState();
     _viewModel = AddPresupuestoViewModel(
+<<<<<<< HEAD
       idUsuario: widget.idUsuario,
       presupuestoParaEditar: widget.presupuestoParaEditar,
       onStateChanged: () {
@@ -47,16 +56,85 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
       _isCustomCategory = true;
       _categoriaController.text = widget.presupuestoParaEditar!.categoria;
     }
+=======
+        idUsuario: widget.idUsuario,
+        presupuestoParaEditar: widget.presupuestoParaEditar,
+        onStateChanged: () {
+          if (mounted) setState(() {});
+        });
+    _viewModel.inicializarFormulario();
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   }
 
   @override
   void dispose() {
     _viewModel.dispose();
+<<<<<<< HEAD
     _categoriaController.dispose();
     _categoriaFocusNode.dispose();
     super.dispose();
   }
 
+=======
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+            _viewModel.isEditMode ? 'Editar presupuesto' : 'Crear presupuesto'),
+        centerTitle: true,
+      ),
+      drawer: MenuDesplegable(idUsuario: widget.idUsuario),
+      body: SafeArea(
+        child: GestureDetector(
+          onTap: () => FocusScope.of(context).unfocus(),
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16.0),
+            child: Form(
+              key: _viewModel.formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  _buildHeaderSection(),
+                  const SizedBox(height: 24),
+                  _buildNombreInput(),
+                  const SizedBox(height: 16),
+                  _buildCategoriaDropdown(),
+                  if (_viewModel.mostrarCampoNuevaCategoria) ...[
+                    const SizedBox(height: 16),
+                    _buildNuevaCategoriaInput(),
+                  ],
+                  const SizedBox(height: 16),
+                  _buildMontoInput(),
+                  const SizedBox(height: 16),
+                  _buildFechasSection(),
+                  const SizedBox(height: 32),
+                  _buildGuardarButton(),
+                  if (_viewModel.errorMessage.isNotEmpty) ...[
+                    const SizedBox(height: 16),
+                    Text(
+                      _viewModel.errorMessage,
+                      style: const TextStyle(color: Colors.red),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+      bottomNavigationBar: CustomBottomNavBar(
+        idUsuario: widget.idUsuario,
+        currentIndex: 3,
+      ),
+    );
+  }
+
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   Widget _buildHeaderSection() {
     return Container(
       padding: const EdgeInsets.all(16),
@@ -136,6 +214,7 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
     );
   }
 
+<<<<<<< HEAD
   Widget _buildCategoryField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -219,11 +298,175 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
                     style: TextStyle(color: AppTheme.naranja)),
               ),
             ],
+=======
+  Widget _buildCategoriaDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: AppTheme.gris,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              labelText: 'Categoría',
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 8),
+            ),
+            value: _viewModel.categorias.contains(_viewModel.categoriaSeleccionada)
+                ? _viewModel.categoriaSeleccionada
+                : _viewModel.categorias.first,
+            dropdownColor: AppTheme.gris,
+            style: const TextStyle(color: AppTheme.blanco),
+            icon: const Icon(Icons.arrow_drop_down, color: AppTheme.naranja),
+            items: _viewModel.categorias.map((String categoria) {
+              return DropdownMenuItem<String>(
+                value: categoria,
+                child: Text(
+                  categoria,
+                  style: TextStyle(
+                    fontStyle: categoria == 'Personalizada'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              if (newValue != null) {
+                setState(() {
+                  _viewModel.categoriaSeleccionada = newValue;
+                });
+              }
+            },
+            validator: (value) => _viewModel.validarCategoria(value),
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (!_viewModel.mostrarCampoNuevaCategoria)
+          OutlinedButton.icon(
+            onPressed: () {
+              setState(() {
+                _viewModel.categoriaSeleccionada = 'Personalizada';
+              });
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppTheme.naranja,
+              side: BorderSide(color: AppTheme.naranja.withOpacity(0.5)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: const Icon(Icons.add_circle_outline),
+            label: const Text('Añadir nueva categoría'),
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
           ),
       ],
     );
   }
 
+<<<<<<< HEAD
+=======
+  Widget _buildNuevaCategoriaInput() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.gris.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.naranja.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Nueva categoría personalizada',
+            style: TextStyle(
+              color: AppTheme.blanco,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _viewModel.nuevaCategoriaController,
+            decoration: InputDecoration(
+              labelText: 'Nombre de la categoría',
+              prefixIcon: const Icon(Icons.create_new_folder_outlined),
+              hintText: 'Ej: Mascotas, Aficiones, etc.',
+              filled: true,
+              fillColor: AppTheme.gris,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                  RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]')),
+            ],
+            style: const TextStyle(color: AppTheme.blanco),
+            validator: _viewModel.mostrarCampoNuevaCategoria
+                ? (value) => _viewModel.validarNuevaCategoria(value)
+                : null,
+            textCapitalization: TextCapitalization.sentences,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    final nuevaCategoria =
+                        _viewModel.nuevaCategoriaController.text.trim();
+                    if (nuevaCategoria.isNotEmpty) {
+                      _viewModel.agregarCategoriaPersonalizada(nuevaCategoria);
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.naranja,
+                    foregroundColor: AppTheme.colorFondo,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  icon: const Icon(Icons.add),
+                  label: const Text(
+                    'Agregar categoría',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _viewModel.categoriaSeleccionada = 
+                        _viewModel.categorias.first;  // Reset to default category
+                    _viewModel.nuevaCategoriaController.clear();
+                  });
+                },
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.grey.withOpacity(0.2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   Widget _buildMontoInput() {
     return TextFormField(
       controller: _viewModel.cantidadController,
@@ -389,7 +632,12 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
 
   Widget _buildGuardarButton() {
     return ElevatedButton(
+<<<<<<< HEAD
       onPressed: _viewModel.isLoading ? null : () => _guardarPresupuesto(context),
+=======
+      onPressed:
+          _viewModel.isLoading ? null : () => _guardarPresupuesto(context),
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 16),
         backgroundColor: AppTheme.naranja,
@@ -423,11 +671,14 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
   Future<void> _guardarPresupuesto(BuildContext context) async {
     FocusScope.of(context).unfocus();
 
+<<<<<<< HEAD
     // Si es categoría personalizada, asignar el valor del campo de texto
     if (_isCustomCategory) {
       _viewModel.categoriaSeleccionada = _categoriaController.text.trim();
     }
 
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     try {
       final bool resultado = await _viewModel.guardarPresupuesto();
 
@@ -461,6 +712,7 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
       );
     }
   }
+<<<<<<< HEAD
 
   @override
   Widget build(BuildContext context) {
@@ -515,5 +767,7 @@ class _AddPresupuestoScreenState extends State<AddPresupuestoScreen> {
       ),
     );
   }
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 }
 

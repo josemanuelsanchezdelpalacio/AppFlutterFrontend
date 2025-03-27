@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 
+<<<<<<< HEAD
 //componentes reutilizables para las pantallas de calculos
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 class ComponentesuiCalculos {
 
   static Widget buildSeccionTitulo(String title) {

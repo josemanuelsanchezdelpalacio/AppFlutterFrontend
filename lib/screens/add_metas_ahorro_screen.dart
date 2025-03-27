@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+<<<<<<< HEAD
 import 'package:flutter_proyecto_app/components/barra_inferior_secciones.dart';
 import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
 import 'package:flutter_proyecto_app/data/categorias_data.dart';
+=======
+import 'package:flutter_proyecto_app/components/custom_bottom_app_bar.dart';
+import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/data/metas_ahorro.dart';
 import 'package:flutter_proyecto_app/models/add_metas_ahorro_viewmodel.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
@@ -25,9 +30,13 @@ class AddMetasAhorroScreen extends StatefulWidget {
 class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
   final _formKey = GlobalKey<FormState>();
   late AddMetasAhorroViewModel _viewModel;
+<<<<<<< HEAD
   final TextEditingController _categoriaController = TextEditingController();
   final FocusNode _categoriaFocusNode = FocusNode();
   bool _isCustomCategory = false;
+=======
+  bool mostrarCampoNuevaCategoria = false;
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 
   @override
   void initState() {
@@ -36,6 +45,7 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
       idUsuario: widget.idUsuario,
       metaAhorroParaEditar: widget.metaAhorroParaEditar,
     );
+<<<<<<< HEAD
     
     // Verificar si la categoría es personalizada
     if (widget.metaAhorroParaEditar != null && 
@@ -43,13 +53,20 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
       _isCustomCategory = true;
       _categoriaController.text = widget.metaAhorroParaEditar!.categoria;
     }
+=======
+    // Verificar si necesitamos mostrar el campo de nueva categoría
+    mostrarCampoNuevaCategoria = _viewModel.categoriaController.text == 'Personalizada';
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   }
 
   @override
   void dispose() {
     _viewModel.dispose();
+<<<<<<< HEAD
     _categoriaController.dispose();
     _categoriaFocusNode.dispose();
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     super.dispose();
   }
 
@@ -83,6 +100,7 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
   }
 
   Future<void> _guardarMetaAhorro() async {
+<<<<<<< HEAD
     if (!_formKey.currentState!.validate()) {
       return;
     }
@@ -120,6 +138,37 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
       }
     } finally {
       if (mounted) {
+=======
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _viewModel.setLoading(true);
+      });
+
+      try {
+        final result = await _viewModel.guardarMetaAhorro();
+
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(result),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navegar a MetasAhorroScreen después de guardar
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(_viewModel.errorMessage ?? 'Error desconocido'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         setState(() {
           _viewModel.setLoading(false);
         });
@@ -127,6 +176,7 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
     }
   }
 
+<<<<<<< HEAD
   Widget _buildCategoryField() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -215,6 +265,8 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
     );
   }
 
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -226,11 +278,16 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+<<<<<<< HEAD
         backgroundColor: AppTheme.colorFondo,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
       drawer: MenuDesplegable(idUsuario: widget.idUsuario),
       backgroundColor: AppTheme.colorFondo,
+=======
+      ),
+      drawer: MenuDesplegable(idUsuario: widget.idUsuario),
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       body: SafeArea(
         child: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
@@ -255,12 +312,20 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
+<<<<<<< HEAD
+=======
+                            // Icono centrado
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                             const Icon(
                               Icons.savings,
                               color: AppTheme.naranja,
                               size: 48,
                             ),
                             const SizedBox(height: 16),
+<<<<<<< HEAD
+=======
+                            // Texto "Nueva Meta de Ahorro" o "Editar Meta de Ahorro"
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                             Text(
                               _viewModel.isEditing
                                   ? 'Editar Meta de Ahorro'
@@ -272,6 +337,10 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
                               ),
                             ),
                             const SizedBox(height: 8),
+<<<<<<< HEAD
+=======
+                            // Texto descriptivo
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                             const Text(
                               'Crea una meta para controlar tus ahorros',
                               textAlign: TextAlign.center,
@@ -314,8 +383,19 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
 
                     const SizedBox(height: 16),
 
+<<<<<<< HEAD
                     // Campo de categoría mejorado
                     _buildCategoryField(),
+=======
+                    // Sección de categoría con dropdown
+                    _buildCategoriaDropdown(),
+                    
+                    // Sección para nueva categoría personalizada (solo si se selecciona)
+                    if (mostrarCampoNuevaCategoria) ...[
+                      const SizedBox(height: 16),
+                      _buildNuevaCategoriaInput(),
+                    ],
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 
                     const SizedBox(height: 16),
 
@@ -431,7 +511,11 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
 
                     const SizedBox(height: 16),
 
+<<<<<<< HEAD
                     // Fecha Objetivo
+=======
+                    // Fecha Objetivo - Usar un selector de fecha similar al de presupuestos
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
@@ -521,9 +605,208 @@ class _AddMetasAhorroScreenState extends State<AddMetasAhorroScreen> {
           ),
         ),
       ),
+<<<<<<< HEAD
       bottomNavigationBar: BarraInferiorSecciones(
         idUsuario: widget.idUsuario,
         indexActual: 2,
+=======
+      bottomNavigationBar: CustomBottomNavBar(
+        idUsuario: widget.idUsuario,
+        currentIndex: 2, // Corresponde a la pestaña de Metas
+      ),
+    );
+  }
+
+  Widget _buildCategoriaDropdown() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            color: AppTheme.gris,
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: DropdownButtonFormField<String>(
+            decoration: const InputDecoration(
+              labelText: 'Categoría',
+              border: InputBorder.none,
+              contentPadding: EdgeInsets.symmetric(vertical: 8),
+            ),
+            value: _viewModel.categorias.contains(_viewModel.categoriaController.text)
+                ? _viewModel.categoriaController.text
+                : _viewModel.categorias.first,
+            dropdownColor: AppTheme.gris,
+            style: const TextStyle(color: AppTheme.blanco),
+            icon: const Icon(Icons.arrow_drop_down, color: AppTheme.naranja),
+            items: _viewModel.categorias.map((String categoria) {
+              return DropdownMenuItem<String>(
+                value: categoria,
+                child: Text(
+                  categoria,
+                  style: TextStyle(
+                    fontStyle: categoria == 'Personalizada'
+                        ? FontStyle.italic
+                        : FontStyle.normal,
+                  ),
+                ),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              if (newValue != null) {
+                setState(() {
+                  _viewModel.categoriaController.text = newValue;
+                  mostrarCampoNuevaCategoria = (newValue == 'Personalizada');
+                  
+                  if (newValue != 'Personalizada') {
+                    // Si no es personalizada, asegurarse de que el ViewModel lo sepa
+                    _viewModel.toggleCustomCategory(false);
+                  }
+                });
+              }
+            },
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Por favor selecciona una categoría';
+              }
+              return null;
+            },
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (!mostrarCampoNuevaCategoria)
+          OutlinedButton.icon(
+            onPressed: () {
+              setState(() {
+                _viewModel.categoriaController.text = 'Personalizada';
+                mostrarCampoNuevaCategoria = true;
+                _viewModel.toggleCustomCategory(true);
+              });
+            },
+            style: OutlinedButton.styleFrom(
+              foregroundColor: AppTheme.naranja,
+              side: BorderSide(color: AppTheme.naranja.withOpacity(0.5)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+            icon: const Icon(Icons.add_circle_outline),
+            label: const Text('Añadir nueva categoría'),
+          ),
+      ],
+    );
+  }
+
+  Widget _buildNuevaCategoriaInput() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppTheme.gris.withOpacity(0.8),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppTheme.naranja.withOpacity(0.3)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          const Text(
+            'Nueva categoría personalizada',
+            style: TextStyle(
+              color: AppTheme.blanco,
+              fontWeight: FontWeight.bold,
+              fontSize: 16,
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextFormField(
+            controller: _viewModel.nuevaCategoriaController,
+            decoration: InputDecoration(
+              labelText: 'Nombre de la categoría',
+              prefixIcon: const Icon(Icons.create_new_folder_outlined),
+              hintText: 'Ej: Mascotas, Aficiones, etc.',
+              filled: true,
+              fillColor: AppTheme.gris,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+            ),
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(
+                  RegExp(r'[a-zA-ZáéíóúÁÉÍÓÚüÜñÑ0-9\s]')),
+            ],
+            style: const TextStyle(color: AppTheme.blanco),
+            validator: mostrarCampoNuevaCategoria
+                ? (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Ingresa un nombre para la categoría';
+                    }
+                    return null;
+                  }
+                : null,
+            textCapitalization: TextCapitalization.sentences,
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    final nuevaCategoria =
+                        _viewModel.nuevaCategoriaController.text.trim();
+                    if (nuevaCategoria.isNotEmpty) {
+                      setState(() {
+                        // Añadir la nueva categoría y seleccionarla
+                        _viewModel.addNewCategory(nuevaCategoria);
+                        mostrarCampoNuevaCategoria = false;
+                        
+                        // Si estamos en modo de edición, asignar la categoría al controlador correspondiente
+                        if (_viewModel.isEditing) {
+                          _viewModel.categoriaPersonalizadaController.text = nuevaCategoria;
+                        }
+                      });
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: AppTheme.naranja,
+                    foregroundColor: AppTheme.colorFondo,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                  ),
+                  icon: const Icon(Icons.add),
+                  label: const Text(
+                    'Agregar categoría',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: () {
+                  setState(() {
+                    _viewModel.categoriaController.text = 
+                        _viewModel.categorias.first;  // Reset to default category
+                    _viewModel.nuevaCategoriaController.clear();
+                    mostrarCampoNuevaCategoria = false;
+                    _viewModel.toggleCustomCategory(false);
+                  });
+                },
+                style: IconButton.styleFrom(
+                  backgroundColor: Colors.grey.withOpacity(0.2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+                icon: const Icon(
+                  Icons.close,
+                  color: Colors.grey,
+                ),
+              ),
+            ],
+          ),
+        ],
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       ),
     );
   }

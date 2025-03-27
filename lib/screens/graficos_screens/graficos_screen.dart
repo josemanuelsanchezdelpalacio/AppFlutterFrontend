@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
+<<<<<<< HEAD
 import 'package:flutter_proyecto_app/components/barra_inferior_secciones.dart';
+=======
+import 'package:flutter_proyecto_app/components/custom_bottom_app_bar.dart';
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/models/graficos_viewmodel.dart';
 import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
 import 'package:flutter_proyecto_app/screens/graficos_screens/graficos_ahorros.dart';
 import 'package:flutter_proyecto_app/screens/graficos_screens/graficos_ingresos_gastos.dart';
+<<<<<<< HEAD
+=======
+import 'package:flutter_proyecto_app/screens/graficos_screens/graficos_presupuesto.dart';
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/screens/graficos_screens/graficos_resumen.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
@@ -76,7 +84,16 @@ class _GraficosScreenState extends State<GraficosScreen>
                 _infoSection(
                   'Ahorros',
                   'Visualiza la proporción de tus ahorros respecto a tus gastos y monitorea el porcentaje de dinero que estás guardando.',
+<<<<<<< HEAD
                 )
+=======
+                ),
+                const SizedBox(height: 12),
+                _infoSection(
+                  'Presupuesto',
+                  'Verifica el cumplimiento de tu presupuesto por categorías y el porcentaje de utilización para mantener tus finanzas bajo control.',
+                ),
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
               ],
             ),
           ),
@@ -152,7 +169,12 @@ class _GraficosScreenState extends State<GraficosScreen>
             tabs: const [
               Tab(text: 'Resumen'),
               Tab(text: 'Ingresos/Gastos'),
+<<<<<<< HEAD
               Tab(text: 'Ahorros')
+=======
+              Tab(text: 'Ahorros'),
+              Tab(text: 'Presupuesto'),
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
             ],
             indicatorColor: AppTheme.naranja,
             labelColor: AppTheme.naranja,
@@ -183,12 +205,20 @@ class _GraficosScreenState extends State<GraficosScreen>
                 SeccionResumen(),
                 SeccionIngresosGastos(),
                 SeccionAhorros(),
+<<<<<<< HEAD
+=======
+                SeccionPresupuesto(),
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
               ],
             );
           },
         ),
         bottomNavigationBar:
+<<<<<<< HEAD
             BarraInferiorSecciones(idUsuario: widget.idUsuario, indexActual: 0),
+=======
+            CustomBottomNavBar(idUsuario: widget.idUsuario, currentIndex: 0),
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       ),
     );
   }

@@ -14,6 +14,10 @@ class MetasAhorroViewModel extends ChangeNotifier {
   DateTime? _mesFiltro;
   List<String?> _mesesDisponibles = [];
 
+<<<<<<< HEAD
+=======
+  //lista de filtros disponibles
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   final List<String?> _filtros = [
     null, //sin filtro
     'Completadas',
@@ -24,6 +28,10 @@ class MetasAhorroViewModel extends ChangeNotifier {
 
   MetasAhorroViewModel(this.userId);
 
+<<<<<<< HEAD
+=======
+  //getters
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   bool get isLoading => _isLoading;
   List<MetaAhorro> get metasAhorro => _metasAhorro;
   String? get errorMessage => _errorMessage;
@@ -37,6 +45,10 @@ class MetasAhorroViewModel extends ChangeNotifier {
   int get metasPendientes =>
       _metasAhorro.where((meta) => !meta.completada).length;
 
+<<<<<<< HEAD
+=======
+  //metodos
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   Future<void> cargarMetasAhorro() async {
     _isLoading = true;
     _errorMessage = null;
@@ -56,7 +68,14 @@ class MetasAhorroViewModel extends ChangeNotifier {
   }
 
   void _generarMesesDisponibles() {
+<<<<<<< HEAD
     _mesesDisponibles = [null];
+=======
+    // Inicializar con la opción "Todos los meses"
+    _mesesDisponibles = [null];
+
+    // Obtener todos los meses únicos de las fechas objetivo
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     Set<String> mesesUnicos = {};
 
     for (var meta in _metasAhorro) {
@@ -65,6 +84,10 @@ class MetasAhorroViewModel extends ChangeNotifier {
       mesesUnicos.add(mesFormateado);
     }
 
+<<<<<<< HEAD
+=======
+    // Ordenar los meses (primero convertir a DateTime para ordenar cronológicamente)
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     List<DateTime> fechasOrdenadas = [];
     DateFormat formatter = DateFormat('MMMM yyyy', 'es');
 
@@ -77,8 +100,17 @@ class MetasAhorroViewModel extends ChangeNotifier {
     }
 
     fechasOrdenadas.sort();
+<<<<<<< HEAD
     List<String> mesesOrdenados =
         fechasOrdenadas.map((fecha) => formatter.format(fecha)).toList();
+=======
+
+    // Convertir de nuevo a strings formateados
+    List<String> mesesOrdenados =
+        fechasOrdenadas.map((fecha) => formatter.format(fecha)).toList();
+
+    // Añadir a la lista de meses disponibles
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     _mesesDisponibles.addAll(mesesOrdenados);
   }
 
@@ -91,6 +123,10 @@ class MetasAhorroViewModel extends ChangeNotifier {
     }
   }
 
+<<<<<<< HEAD
+=======
+  //metodos de filtrado
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   void cambiarFiltro(String? filtro) {
     _filtroActual = filtro;
     notifyListeners();
@@ -103,15 +139,28 @@ class MetasAhorroViewModel extends ChangeNotifier {
 
   bool _coincideConMesFiltro(MetaAhorro meta) {
     if (_mesFiltro == null) return true;
+<<<<<<< HEAD
+=======
+
+    // Comparamos solo mes y año
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     return meta.fechaObjetivo.year == _mesFiltro!.year &&
         meta.fechaObjetivo.month == _mesFiltro!.month;
   }
 
   List<MetaAhorro> get metasFiltradas {
+<<<<<<< HEAD
+=======
+    // Primero aplicamos el filtro por mes
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     List<MetaAhorro> resultado = _mesFiltro == null
         ? List.from(_metasAhorro)
         : _metasAhorro.where(_coincideConMesFiltro).toList();
 
+<<<<<<< HEAD
+=======
+    // Luego aplicamos el filtro por estado
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     if (_filtroActual == null) {
       return resultado;
     }
@@ -135,6 +184,7 @@ class MetasAhorroViewModel extends ChangeNotifier {
     }
   }
 
+<<<<<<< HEAD
   double calcularProgreso(MetaAhorro meta) {
     if (meta.cantidadObjetivo <= 0) return 0.0; // Evitar división por cero
     
@@ -144,6 +194,12 @@ class MetasAhorroViewModel extends ChangeNotifier {
     if (progreso < 0.0) return 0.0;
     if (progreso > 1.0) return 1.0;
     
+=======
+  //metodos de calculo y utilidad
+  double calcularProgreso(MetaAhorro meta) {
+    double progreso = meta.cantidadActual / meta.cantidadObjetivo;
+    if (progreso > 1) progreso = 1;
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     return progreso;
   }
 
@@ -163,15 +219,24 @@ class MetasAhorroViewModel extends ChangeNotifier {
   String obtenerTextoTiempoRestante(MetaAhorro meta) {
     final dias = diasRestantes(meta);
     if (dias > 0) {
+<<<<<<< HEAD
       return '$dias días restantes';
     } else if (dias == 0) {
       return 'Vence hoy';
     } else {
       return 'Vencida hace ${-dias} días';
+=======
+      return '$dias dias restantes';
+    } else if (dias == 0) {
+      return 'Vence hoy';
+    } else {
+      return 'Vencida hace ${-dias} dias';
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     }
   }
 
   IconData obtenerIconoCategoria(String categoria) {
+<<<<<<< HEAD
     switch (categoria.toLowerCase()) {
       case 'salario':
         return Icons.payments;
@@ -186,11 +251,30 @@ class MetasAhorroViewModel extends ChangeNotifier {
       case 'venta':
         return Icons.store;
       case 'otros':
+=======
+    switch (categoria) {
+      case 'Salario':
+        return Icons.payments;
+      case 'Inversiones':
+        return Icons.trending_up;
+      case 'Freelance':
+        return Icons.work;
+      case 'Regalo':
+        return Icons.card_giftcard;
+      case 'Reembolso':
+        return Icons.assignment_return;
+      case 'Venta':
+        return Icons.store;
+      case 'Otros':
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         return Icons.more_horiz;
       default:
         return Icons.savings;
     }
   }
 }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

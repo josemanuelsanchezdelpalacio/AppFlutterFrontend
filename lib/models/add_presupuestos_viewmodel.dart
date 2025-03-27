@@ -10,28 +10,48 @@ class AddPresupuestoViewModel {
     required this.onStateChanged,
   });
 
+<<<<<<< HEAD
   //campos y servicio
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   final PresupuestosService _presupuestoService = PresupuestosService();
 
   //variables para el id del usuario y contexto de edición
+=======
+  // Campos y servicio
+  final GlobalKey<FormState> formKey = GlobalKey<FormState>();
+  final PresupuestosService _presupuestoService = PresupuestosService();
+
+  // Variables para el id del usuario y contexto de edición
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   final int idUsuario;
   final Presupuesto? presupuestoParaEditar;
   final VoidCallback onStateChanged;
 
+<<<<<<< HEAD
   //controladores para los campos
+=======
+  // Controladores para los campos
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController cantidadController = TextEditingController();
   final TextEditingController nuevaCategoriaController = TextEditingController();
 
+<<<<<<< HEAD
   //estado del formulario
+=======
+  // Estado del formulario
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   bool isLoading = false;
   String errorMessage = '';
   bool isEditMode = false;
   int? presupuestoId;
   bool mostrarCampoNuevaCategoria = false;
 
+<<<<<<< HEAD
   //uso categorías predefinidas de CategoriasData
+=======
+  // Usar categorías predefinidas de CategoriasData
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   final List<String> categoriasPredefinidas = CategoriasData.categoriasGastos;
 
   final List<String> _categoriasPersonalizadas = [];
@@ -44,7 +64,11 @@ class AddPresupuestoViewModel {
     ];
   }
 
+<<<<<<< HEAD
   //variables de estado
+=======
+  // Variables de estado
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   String _categoriaSeleccionada = CategoriasData.categoriasGastos.first;
   DateTime _fechaInicio = DateTime.now();
   DateTime _fechaFin = DateTime.now().add(const Duration(days: 30));
@@ -63,7 +87,11 @@ class AddPresupuestoViewModel {
     onStateChanged();
   }
 
+<<<<<<< HEAD
   //metodo para agregar una nueva categoría personalizada
+=======
+  // Método para agregar una nueva categoría personalizada
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   void agregarCategoriaPersonalizada(String nuevaCategoria) {
     if (nuevaCategoria.isNotEmpty &&
         !_categoriasPersonalizadas.contains(nuevaCategoria) &&
@@ -76,13 +104,18 @@ class AddPresupuestoViewModel {
     }
   }
 
+<<<<<<< HEAD
   //metodo para inicializar los campos con datos del presupuesto existente si estamos editando
+=======
+  // Método para inicializar los campos con datos del presupuesto existente si estamos editando
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   void inicializarFormulario() {
     if (presupuestoParaEditar != null) {
       final presupuesto = presupuestoParaEditar!;
       isEditMode = true;
       presupuestoId = presupuesto.id;
 
+<<<<<<< HEAD
       //relleno todos los campos
       nombreController.text = presupuesto.nombre ?? '';
       cantidadController.text = presupuesto.cantidad.toString();
@@ -91,6 +124,17 @@ class AddPresupuestoViewModel {
       final categoriaNormalizada = _normalizarCategoria(presupuesto.categoria);
 
       //si la categoría no está en las predefinidas la agrego a las personalizadas
+=======
+      // Relleno todos los campos
+      nombreController.text = presupuesto.nombre ?? '';
+      cantidadController.text = presupuesto.cantidad.toString();
+
+      // Corrigo el problema de codificación para la categoría
+      // Compruebo si la categoría existe en la lista de categorías
+      final categoriaNormalizada = _normalizarCategoria(presupuesto.categoria);
+
+      // Si la categoría no está en las predefinidas, la agregamos a las personalizadas
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       if (!categoriasPredefinidas.contains(categoriaNormalizada) &&
           !_categoriasPersonalizadas.contains(categoriaNormalizada) &&
           categoriaNormalizada != 'Personalizada') {
@@ -100,7 +144,11 @@ class AddPresupuestoViewModel {
       if (categorias.contains(categoriaNormalizada)) {
         _categoriaSeleccionada = categoriaNormalizada;
       } else {
+<<<<<<< HEAD
         //si no se encuentra uso el primer valor por defecto
+=======
+        // Si no se encuentra uso el primer valor por defecto
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         _categoriaSeleccionada = categorias.first;
       }
 
@@ -110,9 +158,15 @@ class AddPresupuestoViewModel {
     }
   }
 
+<<<<<<< HEAD
   //metodo para normalizar la categoría (corrige problemas de codificación)
   String _normalizarCategoria(String categoria) {
     //mapeo de posibles categorías con problemas de codificación
+=======
+  // Método para normalizar la categoría (corrige problemas de codificación)
+  String _normalizarCategoria(String categoria) {
+    // Mapeo de posibles categorías con problemas de codificación
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     final Map<String, String> mapeoCategoriasCorrectas = {
       'AlimentaciÃ³n': 'Alimentación',
       'EducaciÃ³n': 'Educación',
@@ -122,10 +176,24 @@ class AddPresupuestoViewModel {
     return mapeoCategoriasCorrectas[categoria] ?? categoria;
   }
 
+<<<<<<< HEAD
   //metodo para actualizar las fechas
   void actualizarFechaInicio(DateTime fecha) {
     _fechaInicio = fecha;
     //aseguro que la fecha de fin no sea anterior a la de inicio
+=======
+  // Libero recursos
+  void dispose() {
+    nombreController.dispose();
+    cantidadController.dispose();
+    nuevaCategoriaController.dispose();
+  }
+
+  // Método para actualizar las fechas
+  void actualizarFechaInicio(DateTime fecha) {
+    _fechaInicio = fecha;
+    // Aseguro que la fecha de fin no sea anterior a la de inicio
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     if (_fechaInicio.isAfter(_fechaFin)) {
       _fechaFin = _fechaInicio.add(const Duration(days: 1));
     }
@@ -137,7 +205,11 @@ class AddPresupuestoViewModel {
     onStateChanged();
   }
 
+<<<<<<< HEAD
   //metodos de validación
+=======
+  // Métodos de validación
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   String? validarNombre(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Por favor ingresa un nombre para el presupuesto';
@@ -153,7 +225,11 @@ class AddPresupuestoViewModel {
       return 'Ingresa una cantidad';
     }
 
+<<<<<<< HEAD
     //reemplazo coma con punto para el análisis
+=======
+    // Reemplazo coma con punto para el análisis
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     final valorNumerico = value.replaceAll(',', '.');
 
     try {
@@ -190,9 +266,15 @@ class AddPresupuestoViewModel {
     return null;
   }
 
+<<<<<<< HEAD
   //metodo para guardar presupuesto
   Future<bool> guardarPresupuesto() async {
     //compruebo si se está intentando guardar
+=======
+  // Método para guardar presupuesto
+  Future<bool> guardarPresupuesto() async {
+    // Verificar si se está intentando guardar con "Agregar categoría personalizada..." seleccionada
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     if (_categoriaSeleccionada == 'Agregar categoría personalizada...') {
       errorMessage = 'Por favor selecciona una categoría o agrega una nueva';
       onStateChanged();
@@ -205,11 +287,19 @@ class AddPresupuestoViewModel {
         errorMessage = '';
         onStateChanged();
 
+<<<<<<< HEAD
         //analizo la cantidad del presupuesto
         final double cantidad =
             double.parse(cantidadController.text.replaceAll(',', '.'));
 
         //creo el objeto de presupuesto
+=======
+        // Analizo la cantidad del presupuesto
+        final double cantidad =
+            double.parse(cantidadController.text.replaceAll(',', '.'));
+
+        // Creo el objeto de presupuesto
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         final presupuesto = Presupuesto(
           id: isEditMode ? presupuestoId : null,
           nombre: nombreController.text.trim(),
@@ -221,7 +311,11 @@ class AddPresupuestoViewModel {
           cantidadRestante: cantidad - (isEditMode ? _cantidadGastada : 0.0),
         );
 
+<<<<<<< HEAD
         //envio los datos al servidor
+=======
+        // Envío los datos al servidor
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         if (isEditMode && presupuestoId != null) {
           await _presupuestoService.actualizarPresupuesto(
               idUsuario, presupuestoId!, presupuesto);
@@ -229,7 +323,11 @@ class AddPresupuestoViewModel {
           await _presupuestoService.crearPresupuesto(idUsuario, presupuesto);
         }
 
+<<<<<<< HEAD
         //reinicio formulario si se está creando un nuevo presupuesto
+=======
+        // Reinicio formulario si se está creando un nuevo presupuesto
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         if (!isEditMode) {
           nombreController.clear();
           cantidadController.clear();
@@ -252,6 +350,7 @@ class AddPresupuestoViewModel {
     }
     return false;
   }
+<<<<<<< HEAD
 
   //libero recursos
   void dispose() {
@@ -261,3 +360,6 @@ class AddPresupuestoViewModel {
   }
 }
 
+=======
+}
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

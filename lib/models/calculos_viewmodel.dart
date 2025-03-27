@@ -229,7 +229,11 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
     };
   }
 
+<<<<<<< HEAD
 //amortizacion para prestamos
+=======
+  //amortizacion para prestamos
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   List<Map<String, dynamic>> calcularTablaAmortizacion() {
     List<Map<String, dynamic>> tablaAmortizacion = [];
     double tasaMensual = double.parse((_tasaInteres / 100 / 12).toStringAsFixed(6));
@@ -244,6 +248,7 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
     }
 
     double saldoPendiente = _montoPrestamo;
+<<<<<<< HEAD
     DateTime fechaInicial = DateTime.now();
 
     for (int i = 1; i <= _plazoPrestamo; i++) {
@@ -252,6 +257,10 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
         DateTime(fechaInicial.year, fechaInicial.month + i - 1)
       );
 
+=======
+
+    for (int i = 1; i <= _plazoPrestamo; i++) {
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       double interesMensual = double.parse((saldoPendiente * tasaMensual).toStringAsFixed(2));
       double amortizacion = double.parse((cuotaMensual - interesMensual).toStringAsFixed(2));
       saldoPendiente = double.parse((saldoPendiente - amortizacion).toStringAsFixed(2));
@@ -263,7 +272,11 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
       }
 
       tablaAmortizacion.add({
+<<<<<<< HEAD
         'mes': nombreMes, // Cambiado de 'mes': i
+=======
+        'mes': i,
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         'cuota': cuotaMensual,
         'interes': interesMensual,
         'amortizacion': amortizacion,
@@ -273,7 +286,11 @@ class CalculosFinancierosViewModel extends ChangeNotifier {
 
     return tablaAmortizacion;
   }
+<<<<<<< HEAD
   
+=======
+
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   //calculos para metas de ahorro
   List<Map<String, dynamic>> calcularTiempoMetas() {
     List<Map<String, dynamic>> resultados = [];

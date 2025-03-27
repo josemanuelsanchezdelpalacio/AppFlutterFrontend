@@ -4,9 +4,14 @@ import 'package:flutter_proyecto_app/models/calculos_viewmodel.dart';
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
+<<<<<<< HEAD
 class SeccionPrestamos extends StatelessWidget {
   
   const SeccionPrestamos({super.key});
+=======
+class PrestamosTab extends StatelessWidget {
+  const PrestamosTab({super.key});
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 
   @override
   Widget build(BuildContext context) {
@@ -200,4 +205,7 @@ class SeccionPrestamos extends StatelessWidget {
   }
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

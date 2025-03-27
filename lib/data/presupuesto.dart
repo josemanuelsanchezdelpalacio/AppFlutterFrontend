@@ -17,12 +17,21 @@ class Presupuesto {
     required this.fechaFin,
     double? cantidadGastada,
     double? cantidadRestante,
+<<<<<<< HEAD
   }) : 
     this.cantidadGastada = cantidadGastada ?? 0.0,
     this.cantidadRestante = cantidadRestante ?? (cantidad - (cantidadGastada ?? 0.0));
   
   factory Presupuesto.fromJson(Map json) {
     //parseo de datos Date
+=======
+  })  : cantidadGastada = cantidadGastada ?? 0.0,
+        cantidadRestante = cantidadRestante ??
+            (cantidadGastada != null ? cantidad - cantidadGastada : cantidad);
+
+  factory Presupuesto.fromJson(Map<String, dynamic> json) {
+    // Parse dates safely
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     DateTime parseDate(dynamic dateStr) {
       try {
         return dateStr is String ? DateTime.parse(dateStr) : DateTime.now();
@@ -31,7 +40,11 @@ class Presupuesto {
       }
     }
 
+<<<<<<< HEAD
     //parseo de datos Double
+=======
+    // Safely convert to double with default
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     double safeDouble(dynamic value, [double defaultValue = 0.0]) {
       if (value == null) return defaultValue;
       return (value is num) ? value.toDouble() : defaultValue;
@@ -52,7 +65,11 @@ class Presupuesto {
     );
   }
 
+<<<<<<< HEAD
   Map toJson() {
+=======
+  Map<String, dynamic> toJson() {
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     return {
       if (id != null) 'id': id,
       if (nombre != null) 'nombre': nombre,
@@ -65,7 +82,11 @@ class Presupuesto {
     };
   }
 
+<<<<<<< HEAD
   // Método para actualizar un presupuesto con una transacción
+=======
+  //metodo para actualizar un presupueso con una transaccion
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   Presupuesto actualizarConTransaccion(double transactionAmount) {
     double newCantidadGastada = cantidadGastada + transactionAmount;
     double newCantidadRestante = cantidad - newCantidadGastada;
@@ -82,11 +103,18 @@ class Presupuesto {
     );
   }
 
+<<<<<<< HEAD
   // Método para comprobar si una transacción se aplica a este presupuesto
+=======
+  //metodo para comprobar si una transaccion applies se aplica a este presupuesto
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   bool isTransactionApplicable(DateTime transactionDate) {
     return !transactionDate.isBefore(fechaInicio) &&
         !transactionDate.isAfter(fechaFin);
   }
 }
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

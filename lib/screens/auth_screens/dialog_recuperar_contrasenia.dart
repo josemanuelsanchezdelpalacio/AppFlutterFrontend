@@ -186,3 +186,7 @@ class _DialogRecuperarContraseniaState extends State<DialogRecuperarContrasenia>
   }
 }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

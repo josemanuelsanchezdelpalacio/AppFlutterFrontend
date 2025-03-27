@@ -1,5 +1,8 @@
 import 'dart:convert';
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/data/presupuesto.dart';
 import 'package:flutter_proyecto_app/data/transaccion.dart';
 import 'package:http/http.dart' as http;
@@ -107,6 +110,7 @@ class PresupuestosService {
   //metodo para actualizar los presupuestos afectados por una transaccion
   Future<void> actualizarPresupuestosConTransaccion(
       int idUsuario, Transaccion transaccion) async {
+<<<<<<< HEAD
     if (transaccion.tipoTransaccion != TipoTransacciones.GASTO ||
         transaccion.presupuestoId == null) return;
 
@@ -166,6 +170,82 @@ class PresupuestosService {
           idUsuario, presupuesto.id!, presupuestoActualizado);
     } catch (e) {
       throw Exception('Error al revertir transacción en presupuesto: $e');
+=======
+    //compruebo que la transaccion es de tipo gasto
+    if (transaccion.tipoTransaccion != TipoTransacciones.GASTO) return;
+
+    try {
+      //obtengo los presupuestos del usuario
+      final presupuestos = await obtenerPresupuestos(idUsuario);
+
+      //encuentro presupuestos aplicables
+      final presupuestosAplicables = presupuestos
+          .where((presupuesto) =>
+              presupuesto.categoria == transaccion.categoria &&
+              presupuesto.isTransactionApplicable(transaccion.fechaTransaccion))
+          .toList();
+
+      //actualizo cada presupuesto
+      for (var presupuesto in presupuestosAplicables) {
+        //creo presupuesto actualizado
+        final presupuestoActualizado =
+            presupuesto.actualizarConTransaccion(transaccion.cantidad);
+
+        //guardo los cambios en el backend
+        await actualizarPresupuesto(
+            idUsuario, presupuesto.id!, presupuestoActualizado);
+      }
+    } catch (e) {
+      throw Exception('Error al actualizar presupuestos: $e');
+    }
+  }
+
+  //metodo para revertir los efectos de una transaccion en los presupuestos
+  Future<void> revertirTransaccion(
+      int idUsuario, Transaccion transaccion) async {
+    if (transaccion.tipoTransaccion != TipoTransacciones.GASTO) return;
+
+    try {
+      //obtengo presupuestos afectados
+      final presupuestos = await obtenerPresupuestos(idUsuario);
+
+      final presupuestosAfectados = presupuestos
+          .where((p) =>
+              p.categoria == transaccion.categoria &&
+              !transaccion.fechaTransaccion.isBefore(p.fechaInicio) &&
+              !transaccion.fechaTransaccion.isAfter(p.fechaFin))
+          .toList();
+
+      //revierto los efectos en cada presupuesto
+      for (var presupuesto in presupuestosAfectados) {
+        //calculo los nuevos valores restando la transaccion
+        double nuevaCantidadGastada =
+            (presupuesto.cantidadGastada) - transaccion.cantidad;
+
+        //aseguro que no quede en negativo
+        if (nuevaCantidadGastada < 0) nuevaCantidadGastada = 0;
+
+        double nuevaCantidadRestante =
+            presupuesto.cantidad - nuevaCantidadGastada;
+
+        //actualizo el presupuesto con los nuevos valores
+        final presupuestoActualizado = Presupuesto(
+          id: presupuesto.id,
+          categoria: presupuesto.categoria,
+          cantidad: presupuesto.cantidad,
+          fechaInicio: presupuesto.fechaInicio,
+          fechaFin: presupuesto.fechaFin,
+          cantidadGastada: nuevaCantidadGastada,
+          cantidadRestante: nuevaCantidadRestante,
+        );
+
+        //actualizo el presupuesto en el backend
+        await actualizarPresupuesto(
+            idUsuario, presupuesto.id!, presupuestoActualizado);
+      }
+    } catch (e) {
+      throw Exception('Error al revertir transacción en presupuestos: $e');
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     }
   }
 }

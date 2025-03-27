@@ -22,9 +22,15 @@ class LoginScreen extends StatelessWidget {
             automaticallyImplyLeading: false,
             actions: [
               IconButton(
+<<<<<<< HEAD
                 icon: const Icon(Icons.info_outline, color: Colors.white), // Icono blanco
                 onPressed: () => _mostrarInfoSeguridad(context),
                 tooltip: 'Información de seguridad',
+=======
+                icon: const Icon(Icons.security, color: AppTheme.naranja),
+                onPressed: () => _mostrarInfoSeguridad(context),
+                tooltip: 'Informacion de seguridad',
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
               ),
             ],
           ),
@@ -57,6 +63,7 @@ class LoginScreen extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                 _infoSection(
+<<<<<<< HEAD
                   'Encriptación AES-256',
                   'Todos tus datos sensibles se almacenan localmente utilizando encriptación AES-256, el estándar de oro en seguridad de datos. Esto garantiza que tu información esté protegida incluso en el dispositivo.',
                 ),
@@ -69,6 +76,20 @@ class LoginScreen extends StatelessWidget {
                 _infoSection(
                   'Autenticación con Google',
                   'Al iniciar sesión con Google usamos Firebase Authentication, que sigue los más altos estándares de seguridad. Solo obtenemos información básica de tu perfil sin acceso a tu contraseña.',
+=======
+                  'Autenticacion Local',
+                  'Tus credenciales se almacenan en una base de datos local encriptada. Esta informacion nunca se comparte con terceros y solo se utiliza para verificar tu identidad dentro de la aplicacion.',
+                ),
+                const SizedBox(height: 12),
+                _infoSection(
+                  'Autenticacion con Google',
+                  'Al iniciar sesion con Google se usa Firebase Authentication para gestionar tu acceso de forma segura. Solo obtenemos tu correo electrónico y nombre para crear tu perfil. No se tiene acceso a tu contraseña de Google.',
+                ),
+                const SizedBox(height: 12),
+                _infoSection(
+                  'Compromiso de Privacidad',
+                  'No se comparten ni se vende tu informacion personal a terceros',
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                 ),
               ],
             ),
@@ -170,6 +191,7 @@ class _LoginFormState extends State<LoginForm> {
                 ),
                 const SizedBox(height: 40),
 
+<<<<<<< HEAD
                 // Campo de email
                 TextFormField(
                   controller: emailController,
@@ -188,6 +210,15 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                     filled: true,
                     fillColor: AppTheme.gris,
+=======
+                //campo de email
+                TextFormField(
+                  controller: emailController,
+                  style: const TextStyle(color: AppTheme.blanco),
+                  decoration: const InputDecoration(
+                    labelText: 'Email',
+                    prefixIcon: Icon(Icons.email),
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                   ),
                   keyboardType: TextInputType.emailAddress,
                   inputFormatters: [
@@ -197,7 +228,13 @@ class _LoginFormState extends State<LoginForm> {
                     if (value == null || value.isEmpty) {
                       return 'Por favor ingresa tu email';
                     }
+<<<<<<< HEAD
                     if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+=======
+                    // Validación de formato de email
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value)) {
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                       return 'Por favor ingresa un email válido';
                     }
                     return null;
@@ -205,18 +242,29 @@ class _LoginFormState extends State<LoginForm> {
                 ),
                 const SizedBox(height: 20),
 
+<<<<<<< HEAD
                 // Campo de contraseña
+=======
+                //campo de contraseña
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                 TextFormField(
                   controller: passwordController,
                   style: const TextStyle(color: AppTheme.blanco),
                   decoration: InputDecoration(
                     labelText: 'Contraseña',
+<<<<<<< HEAD
                     labelStyle: const TextStyle(color: Colors.white70),
                     prefixIcon: const Icon(Icons.lock, color: AppTheme.naranja),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _showPassword ? Icons.visibility_off : Icons.visibility,
                         color: AppTheme.naranja,
+=======
+                    prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _showPassword ? Icons.visibility_off : Icons.visibility,
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                       ),
                       onPressed: () {
                         setState(() {
@@ -224,6 +272,7 @@ class _LoginFormState extends State<LoginForm> {
                         });
                       },
                     ),
+<<<<<<< HEAD
                     enabledBorder: OutlineInputBorder(
                       borderSide: const BorderSide(color: Colors.white54),
                       borderRadius: BorderRadius.circular(10),
@@ -234,6 +283,8 @@ class _LoginFormState extends State<LoginForm> {
                     ),
                     filled: true,
                     fillColor: AppTheme.gris,
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                   ),
                   obscureText: !_showPassword,
                   validator: (value) {
@@ -251,7 +302,10 @@ class _LoginFormState extends State<LoginForm> {
                     child: const Text(
                       '¿Olvidaste tu contraseña?',
                       style: TextStyle(
+<<<<<<< HEAD
                         color: AppTheme.naranja,
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                       ),
@@ -260,11 +314,16 @@ class _LoginFormState extends State<LoginForm> {
                 ),
                 const SizedBox(height: 30),
 
+<<<<<<< HEAD
                 // Botón de inicio de sesión
+=======
+                //boton de inicio de sesion
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                 SizedBox(
                   width: double.infinity,
                   height: 55,
                   child: ElevatedButton(
+<<<<<<< HEAD
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.naranja,
                       foregroundColor: AppTheme.colorFondo,
@@ -272,6 +331,8 @@ class _LoginFormState extends State<LoginForm> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                     onPressed: viewModel.loading
                         ? null
                         : () {
@@ -293,7 +354,11 @@ class _LoginFormState extends State<LoginForm> {
                             ),
                           )
                         : const Text(
+<<<<<<< HEAD
                             'Iniciar sesión',
+=======
+                            'Iniciar sesion',
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -312,11 +377,16 @@ class _LoginFormState extends State<LoginForm> {
                 ),
                 const SizedBox(height: 20),
 
+<<<<<<< HEAD
                 // Botón de inicio con Google
+=======
+                //boton de inicio con Google
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                 SizedBox(
                   width: double.infinity,
                   height: 55,
                   child: OutlinedButton.icon(
+<<<<<<< HEAD
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppTheme.blanco,
                       side: const BorderSide(color: Colors.white54),
@@ -325,6 +395,10 @@ class _LoginFormState extends State<LoginForm> {
                       ),
                     ),
                     icon: Image.asset('lib/assets/google_logo.png', height: 24.0),
+=======
+                    icon:
+                        Image.asset('lib/assets/google_logo.png', height: 24.0),
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                     label: const Text(
                       'Continuar con Google',
                       style: TextStyle(
@@ -340,7 +414,11 @@ class _LoginFormState extends State<LoginForm> {
 
                 const SizedBox(height: 30),
 
+<<<<<<< HEAD
                 // Navegar a pantalla de registro
+=======
+                //navegar a pantalla de registro
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                 TextButton(
                   onPressed: () {
                     Navigator.pushReplacement(
@@ -350,9 +428,14 @@ class _LoginFormState extends State<LoginForm> {
                     );
                   },
                   child: const Text(
+<<<<<<< HEAD
                     '¿No tienes cuenta? Regístrate',
                     style: TextStyle(
                       color: AppTheme.naranja,
+=======
+                    '¿No tienes cuenta? Registrate',
+                    style: TextStyle(
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                       fontSize: 15,
                       fontWeight: FontWeight.w500,
                     ),
@@ -366,4 +449,7 @@ class _LoginFormState extends State<LoginForm> {
     );
   }
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
