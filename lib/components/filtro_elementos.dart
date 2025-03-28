@@ -31,10 +31,6 @@ class FiltroElementos extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 8.0),
       child: Column(
         children: [
-<<<<<<< HEAD
-=======
-          // Filtro principal
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
           Row(
             children: [
               const Text(
@@ -54,11 +50,7 @@ class FiltroElementos extends StatelessWidget {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: InkWell(
-<<<<<<< HEAD
                     onTap: () => _mostrarOpcionesFiltrado(context),
-=======
-                    onTap: () => _showFilterOptions(context),
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                     child: Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 12.0),
                       child: Row(
@@ -85,11 +77,7 @@ class FiltroElementos extends StatelessWidget {
             ],
           ),
 
-<<<<<<< HEAD
           //filtro por mes de creación
-=======
-          // Filtro de mes (si está disponible)
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
           if (onMesChanged != null && mesesDisponibles != null) ...[
             const SizedBox(height: 8),
             Row(
@@ -151,11 +139,7 @@ class FiltroElementos extends StatelessWidget {
             ),
           ],
 
-<<<<<<< HEAD
           //filtro por fecha especifica
-=======
-          // Filtro de fecha (si está disponible)
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
           if (fechaFiltro != null) ...[
             const SizedBox(height: 8),
             Row(
@@ -177,11 +161,7 @@ class FiltroElementos extends StatelessWidget {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     child: InkWell(
-<<<<<<< HEAD
                       onTap: () => _seleccionarFecha(context),
-=======
-                      onTap: () => _selectDate(context),
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 12.0),
                         child: Row(
@@ -218,12 +198,8 @@ class FiltroElementos extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
   //metodo para mostrar todas las opciones de filtrado
   void _mostrarOpcionesFiltrado(BuildContext context) {
-=======
-  void _showFilterOptions(BuildContext context) {
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     showModalBottomSheet(
       context: context,
       backgroundColor: AppTheme.gris,
@@ -264,11 +240,7 @@ class FiltroElementos extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
   //metodo para mostrar opciones de mes
-=======
-  // Nuevo método para mostrar opciones de mes
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   void _showMesOptions(BuildContext context) {
     if (mesesDisponibles == null || onMesChanged == null) return;
 
@@ -335,11 +307,7 @@ class FiltroElementos extends StatelessWidget {
     );
   }
 
-<<<<<<< HEAD
   Future<void> _seleccionarFecha(BuildContext context) async {
-=======
-  Future<void> _selectDate(BuildContext context) async {
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: fechaFiltro ?? DateTime.now(),
@@ -366,8 +334,5 @@ class FiltroElementos extends StatelessWidget {
     }
   }
 }
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:flutter_proyecto_app/components/barra_inferior_secciones.dart';
-=======
-import 'package:flutter_proyecto_app/components/custom_bottom_app_bar.dart';
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
 import 'package:flutter_proyecto_app/data/metas_ahorro.dart';
 import 'package:flutter_proyecto_app/data/presupuesto.dart';
@@ -49,10 +45,6 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-<<<<<<< HEAD
-=======
-  //mostrar dialogo de confirmacion para cerrar sesion
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   Future<void> _mostrarDialogoConfirmacion() async {
     return showDialog<void>(
       context: context,
@@ -189,15 +181,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 )
               : _buildBody(),
-<<<<<<< HEAD
       bottomNavigationBar: BarraInferiorSecciones(
         idUsuario: widget.idUsuario,
         indexActual: 0,
-=======
-      bottomNavigationBar: CustomBottomNavBar(
-        idUsuario: widget.idUsuario,
-        currentIndex: 0,
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       ),
     );
   }
@@ -300,10 +286,6 @@ class _HomeScreenState extends State<HomeScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-<<<<<<< HEAD
-=======
-          //balance total
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
           Text(
             formatoMoneda.format(_viewModel.balanceTotal),
             style: TextStyle(
@@ -313,16 +295,8 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 16),
-<<<<<<< HEAD
           Row(
             children: [
-=======
-
-          //resumen de ingresos y gastos
-          Row(
-            children: [
-              //ingresos
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
               Expanded(
                 child: _buildFinancialCard(
                   'Ingresos',
@@ -332,11 +306,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
               const SizedBox(width: 12),
-<<<<<<< HEAD
-=======
-
-              //gastos
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
               Expanded(
                 child: _buildFinancialCard(
                   'Gastos',
@@ -557,11 +526,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 12),
           LinearPercentIndicator(
             lineHeight: 10,
-<<<<<<< HEAD
             percent: porcentaje > 1 ? 1 : (porcentaje < 0 ? 0 : porcentaje),
-=======
-            percent: porcentaje > 1 ? 1 : porcentaje,
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
             progressColor: porcentaje > 0.9 ? Colors.red : AppTheme.naranja,
             backgroundColor: AppTheme.blanco.withOpacity(0.2),
             barRadius: const Radius.circular(5),
@@ -634,12 +599,9 @@ class _HomeScreenState extends State<HomeScreen> {
     final DateTime hoy = DateTime.now();
     final bool fechaVencida = meta.fechaObjetivo.isBefore(hoy);
 
-<<<<<<< HEAD
     // Asegurarnos de que el porcentaje esté entre 0 y 1
     final double porcentajeAjustado = porcentaje.clamp(0.0, 1.0);
 
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     return Container(
       width: 160,
       margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -662,11 +624,7 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 12),
           LinearPercentIndicator(
             lineHeight: 10,
-<<<<<<< HEAD
             percent: porcentajeAjustado,
-=======
-            percent: porcentaje > 1 ? 1 : porcentaje,
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
             progressColor: fechaVencida ? Colors.red : Colors.green,
             backgroundColor: AppTheme.blanco.withOpacity(0.2),
             barRadius: const Radius.circular(5),
@@ -677,11 +635,7 @@ class _HomeScreenState extends State<HomeScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-<<<<<<< HEAD
                 '${(porcentajeAjustado * 100).toStringAsFixed(0)}%',
-=======
-                '${(porcentaje * 100).toStringAsFixed(0)}%',
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                 style: TextStyle(
                   fontSize: 12,
                   color: AppTheme.blanco.withOpacity(0.7),
@@ -710,7 +664,4 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

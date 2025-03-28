@@ -23,19 +23,12 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-<<<<<<< HEAD
   // Initialize Firebase first
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
 
-<<<<<<< HEAD
   // Localization for Spanish
-=======
-  //localizacion para español
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   Intl.defaultLocale = 'es_ES';
   await initializeDateFormatting('es_ES', null);
 

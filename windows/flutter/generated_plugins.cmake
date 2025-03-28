@@ -9,23 +9,16 @@ list(APPEND FLUTTER_PLUGIN_LIST
   firebase_auth
   firebase_core
   flutter_localization
-<<<<<<< HEAD
   flutter_timezone
   geolocator_windows
   local_notifier
-=======
-  geolocator_windows
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   permission_handler_windows
   share_plus
   url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
-<<<<<<< HEAD
   flutter_local_notifications_windows
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)

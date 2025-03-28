@@ -44,14 +44,12 @@ class CategoriasData {
     if (tipo == TipoTransacciones.GASTO) {
       return [
         ...categoriasGastos,
-        ...categoriasPersonalizadasGastos,
-        'Nueva categoría...'
+        ...categoriasPersonalizadasGastos
       ];
     } else {
       return [
         ...categoriasIngresos,
-        ...categoriasPersonalizadasIngresos,
-        'Nueva categoría...'
+        ...categoriasPersonalizadasIngresos
       ];
     }
   }

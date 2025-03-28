@@ -1,35 +1,24 @@
 class Usuario {
-<<<<<<< HEAD
   final bool autenticado;
   final String email;
   final String? password;
   final String mensaje;
   final int idUsuario;
   final String? token;
-=======
-  final String email;
-  final String? password;
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   final String? idUsuarioFirebase;
   final String? authProvider;
 
   Usuario({
-<<<<<<< HEAD
     this.autenticado = false,
     required this.email,
     this.password,
     this.mensaje = '',
     this.idUsuario = 0,
     this.token,
-=======
-    required this.email,
-    this.password,
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     this.idUsuarioFirebase,
     this.authProvider,
   });
 
-<<<<<<< HEAD
   factory Usuario.fromAuthResponse(Map<String, dynamic> json) {
     return Usuario(
       autenticado: json['success'] as bool? ?? false,
@@ -42,8 +31,6 @@ class Usuario {
     );
   }
 
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   factory Usuario.fromJson(Map<String, dynamic> json) {
     return Usuario(
       email: json['email'] as String? ?? '',
@@ -61,7 +48,6 @@ class Usuario {
       if (authProvider != null) 'authProvider': authProvider,
     };
   }
-<<<<<<< HEAD
 
   Usuario copyWithAuthData({
     required bool authenticated,
@@ -83,7 +69,3 @@ class Usuario {
 }
 
 
-=======
-}
-
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

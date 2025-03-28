@@ -29,13 +29,8 @@ class SeccionResumen extends StatelessWidget {
           _buildSummaryItem('Ahorros Totales', viewModel.ahorroTotal,
               Colors.blue, Icons.savings),
           const SizedBox(height: 12),
-<<<<<<< HEAD
           _buildProgressItem(
               'Porcentaje de Ingresos', viewModel.porcentajeIngresos, Colors.green),
-=======
-          _buildProgressItem('Utilización del Presupuesto',
-              viewModel.utilizacionPresupuesto, Colors.orange),
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
           const SizedBox(height: 12),
           _buildProgressItem(
               'Porcentaje de Ahorro', viewModel.porcentajeAhorro, Colors.blue),

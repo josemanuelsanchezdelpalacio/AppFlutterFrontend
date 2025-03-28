@@ -1,15 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_proyecto_app/models/graficos_viewmodel.dart';
-<<<<<<< HEAD
-=======
-import 'package:flutter_proyecto_app/screens/graficos_screens/graficos_screen.dart';
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
 
-<<<<<<< HEAD
 // Definición local de ChartData
 class ChartData {
   final String categoria;
@@ -19,8 +14,6 @@ class ChartData {
   ChartData(this.categoria, this.cantidad, this.color);
 }
 
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 class SeccionAhorros extends StatelessWidget {
   SeccionAhorros({super.key});
 
@@ -214,7 +207,3 @@ class SeccionAhorros extends StatelessWidget {
   }
 }
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

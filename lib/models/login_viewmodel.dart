@@ -33,11 +33,7 @@ class LoginViewModel with ChangeNotifier {
       );
 
       if (respuesta.success && context.mounted) {
-<<<<<<< HEAD
 
-=======
-        // Limpiar cualquier SnackBar previo
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         ScaffoldMessenger.of(context).clearSnackBars();
 
         Navigator.pushReplacementNamed(
@@ -72,11 +68,7 @@ class LoginViewModel with ChangeNotifier {
       final respuesta = await _authService.inicioSesionGoogle();
 
       if (respuesta.success && context.mounted) {
-<<<<<<< HEAD
 
-=======
-        // Limpiar cualquier SnackBar previo
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         ScaffoldMessenger.of(context).clearSnackBars();
 
         Navigator.pushReplacementNamed(
@@ -110,7 +102,4 @@ class LoginViewModel with ChangeNotifier {
     }
   }
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

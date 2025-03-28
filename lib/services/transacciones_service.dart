@@ -1,8 +1,5 @@
 import 'dart:convert';
-<<<<<<< HEAD
 import 'dart:io';
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 
 import 'package:flutter_proyecto_app/data/transaccion.dart';
 import 'package:flutter_proyecto_app/services/metas_ahorro_service.dart';
@@ -18,7 +15,6 @@ class TransaccionesService {
 
   //metodo para crear una nueva transaccion en el backend
   Future<Transaccion> crearTransaccion(
-<<<<<<< HEAD
       int idUsuario, Transaccion transaccion, File? imagen) async {
     try {
       var request = http.MultipartRequest(
@@ -53,25 +49,6 @@ class TransaccionesService {
       }
     } catch (e) {
       throw Exception('Error al crear la transacción: $e');
-=======
-      int idUsuario, Transaccion transaccion) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/crearTransacciones?idUsuario=$idUsuario'),
-        headers: {'Content-Type': 'application/json'},
-        //convierto la transaccion a JSON
-        body: jsonEncode(transaccion.toJson()),
-      );
-
-      if (response.statusCode == 200) {
-        //convierto el JSON a un objeto
-        return Transaccion.fromJson(jsonDecode(response.body));
-      } else {
-        throw Exception('Error al crear la transaccion: ${response.body}');
-      }
-    } catch (e) {
-      throw Exception('Error al crear la transaccion: $e');
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     }
   }
 
@@ -84,7 +61,6 @@ class TransaccionesService {
 
       if (response.statusCode == 200) {
         List<dynamic> jsonList = jsonDecode(response.body);
-<<<<<<< HEAD
 
         // Log the image URLs for debugging
         for (var item in jsonList) {
@@ -94,11 +70,6 @@ class TransaccionesService {
         }
 
         return jsonList.map((json) => Transaccion.fromJson(json)).toList();
-=======
-        return jsonList
-            .map((json) => Transaccion.fromJson(json))
-            .toList(); // Convierte la lista JSON a lista de objetos Transaccion
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       } else {
         throw Exception('Error al obtener las transacciones: ${response.body}');
       }
@@ -236,7 +207,3 @@ class TransaccionesService {
     }
   }
 }
-<<<<<<< HEAD
-=======
-
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

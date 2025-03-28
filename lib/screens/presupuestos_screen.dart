@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:flutter_proyecto_app/components/barra_inferior_secciones.dart';
-=======
-import 'package:flutter_proyecto_app/components/custom_bottom_app_bar.dart';
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/components/filtro_elementos.dart';
 import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
 import 'package:flutter_proyecto_app/data/presupuesto.dart';
@@ -695,21 +691,12 @@ class _PresupuestosScreenState extends State<PresupuestosScreen> {
                   child: const Icon(Icons.add, color: Colors.black),
                 )
               : null,
-<<<<<<< HEAD
       bottomNavigationBar: BarraInferiorSecciones(
         idUsuario: widget.idUsuario,
         indexActual: 3,
-=======
-      bottomNavigationBar: CustomBottomNavBar(
-        idUsuario: widget.idUsuario,
-        currentIndex: 3,
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       ),
     );
   }
 }
-<<<<<<< HEAD
 
 
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

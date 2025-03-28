@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:flutter_proyecto_app/components/barra_inferior_secciones.dart';
-=======
-import 'package:flutter_proyecto_app/components/custom_bottom_app_bar.dart';
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/components/filtro_elementos.dart';
 import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
 import 'package:flutter_proyecto_app/data/metas_ahorro.dart';
@@ -46,7 +42,6 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
     if (mounted) setState(() {});
   }
 
-<<<<<<< HEAD
   // Método para entrar/salir del modo selección
   void _toggleSelectionMode() {
     setState(() {
@@ -87,8 +82,6 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
     });
   }
 
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   // Método combinado para manejar navegación
   void _navegarA({MetaAhorro? metaParaEditar}) {
     Navigator.push(
@@ -102,47 +95,8 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
     ).then((_) => _viewModel.cargarMetasAhorro());
   }
 
-<<<<<<< HEAD
   // Método para mostrar el diálogo de confirmación de eliminación
   void _mostrarDialogoConfirmacionEliminacion(List<MetaAhorro> metas) {
-=======
-  // Método combinado para manejo de selección
-  void _gestionarSeleccion(
-      {int? metaId, bool toggleMode = false, bool selectAll = false}) {
-    setState(() {
-      if (toggleMode) {
-        _isSelectionMode = !_isSelectionMode;
-        _selectedMetas.clear();
-      }
-
-      if (metaId != null) {
-        if (_selectedMetas.contains(metaId)) {
-          _selectedMetas.remove(metaId);
-        } else {
-          _selectedMetas.add(metaId);
-        }
-      }
-
-      if (selectAll) {
-        if (_selectedMetas.length == _viewModel.metasFiltradas.length) {
-          _selectedMetas.clear();
-          _isSelectionMode = false;
-        } else {
-          _selectedMetas =
-              _viewModel.metasFiltradas.map((meta) => meta.id!).toSet();
-        }
-      }
-
-      // Si no hay elementos seleccionados, salir del modo selección
-      if (_selectedMetas.isEmpty && _isSelectionMode) {
-        _isSelectionMode = false;
-      }
-    });
-  }
-
-  // Método combinado para eliminación
-  void _gestionarEliminacion(List<MetaAhorro> metas) {
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -172,10 +126,7 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
     );
   }
 
-<<<<<<< HEAD
   // Método para eliminar las metas seleccionadas
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   Future<void> _eliminarMetas(List<MetaAhorro> metas) async {
     try {
       for (var meta in metas) {
@@ -209,10 +160,7 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
     }
   }
 
-<<<<<<< HEAD
   // Método para mostrar opciones de una meta individual
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   void _mostrarOpcionesMeta(MetaAhorro meta) {
     showModalBottomSheet(
       context: context,
@@ -260,11 +208,7 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
                   style: TextStyle(color: AppTheme.blanco)),
               onTap: () {
                 Navigator.pop(context);
-<<<<<<< HEAD
                 _mostrarDialogoConfirmacionEliminacion([meta]);
-=======
-                _gestionarEliminacion([meta]);
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
               },
             ),
           ],
@@ -285,11 +229,7 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
         leading: _isSelectionMode
             ? IconButton(
                 icon: const Icon(Icons.close),
-<<<<<<< HEAD
                 onPressed: _toggleSelectionMode,
-=======
-                onPressed: () => _gestionarSeleccion(toggleMode: true),
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
               )
             : null,
         actions: _buildAppBarActions(),
@@ -306,15 +246,9 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
                   child: const Icon(Icons.add, color: Colors.black),
                 )
               : null,
-<<<<<<< HEAD
       bottomNavigationBar: BarraInferiorSecciones(
         idUsuario: widget.idUsuario,
         indexActual: 2,
-=======
-      bottomNavigationBar: CustomBottomNavBar(
-        idUsuario: widget.idUsuario,
-        currentIndex: 2,
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       ),
     );
   }
@@ -325,11 +259,7 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
         IconButton(
           icon: const Icon(Icons.select_all),
           tooltip: 'Seleccionar todo',
-<<<<<<< HEAD
           onPressed: _toggleSelectAll,
-=======
-          onPressed: () => _gestionarSeleccion(selectAll: true),
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         ),
         IconButton(
           icon: const Icon(Icons.delete, color: Colors.red),
@@ -340,11 +270,7 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
                       .where((meta) =>
                           meta.id != null && _selectedMetas.contains(meta.id!))
                       .toList();
-<<<<<<< HEAD
                   _mostrarDialogoConfirmacionEliminacion(metasParaEliminar);
-=======
-                  _gestionarEliminacion(metasParaEliminar);
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                 }
               : null,
         ),
@@ -354,11 +280,7 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
         IconButton(
           icon: const Icon(Icons.delete_sweep),
           tooltip: 'Selección múltiple',
-<<<<<<< HEAD
           onPressed: _toggleSelectionMode,
-=======
-          onPressed: () => _gestionarSeleccion(toggleMode: true),
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         ),
       ];
     }
@@ -605,21 +527,12 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
       ),
       child: InkWell(
         onTap: _isSelectionMode
-<<<<<<< HEAD
             ? () => meta.id != null ? _toggleMetaSelection(meta.id!) : null
             : () => _mostrarOpcionesMeta(meta),
         onLongPress: !_isSelectionMode && meta.id != null
             ? () {
                 _toggleSelectionMode();
                 _toggleMetaSelection(meta.id!);
-=======
-            ? () => _gestionarSeleccion(metaId: meta.id!)
-            : () => _mostrarOpcionesMeta(meta),
-        onLongPress: !_isSelectionMode
-            ? () {
-                _gestionarSeleccion(toggleMode: true);
-                _gestionarSeleccion(metaId: meta.id!);
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
               }
             : null,
         child: Padding(
@@ -695,16 +608,10 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
                   CircularPercentIndicator(
                     radius: 35.0,
                     lineWidth: 8.0,
-<<<<<<< HEAD
                     percent: progreso.clamp(
                         0.0, 1.0), // Asegurar que esté entre 0 y 1
                     center: Text(
                       '${(progreso.clamp(0.0, 1.0) * 100).toInt()}%',
-=======
-                    percent: progreso,
-                    center: Text(
-                      '${(progreso * 100).toInt()}%',
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 14.0),
                     ),
@@ -786,3 +693,4 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
     );
   }
 }
+

@@ -86,7 +86,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-<<<<<<< HEAD
   cached_network_image:
     dependency: "direct main"
     description:
@@ -111,8 +110,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.3.1"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   characters:
     dependency: transitive
     description:
@@ -225,7 +222,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.0"
-<<<<<<< HEAD
   dbus:
     dependency: transitive
     description:
@@ -234,8 +230,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.7.11"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   dio:
     dependency: transitive
     description:
@@ -401,7 +395,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-<<<<<<< HEAD
   flutter_cache_manager:
     dependency: transitive
     description:
@@ -410,8 +403,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.4.1"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   flutter_datetime_picker:
     dependency: "direct main"
     description:
@@ -444,7 +435,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.0.0"
-<<<<<<< HEAD
   flutter_local_notifications:
     dependency: "direct main"
     description:
@@ -477,8 +467,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   flutter_localization:
     dependency: "direct main"
     description:
@@ -505,7 +493,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-<<<<<<< HEAD
   flutter_timezone:
     dependency: "direct main"
     description:
@@ -514,8 +501,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.1.0"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   flutter_web_plugins:
     dependency: transitive
     description: flutter
@@ -785,7 +770,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "5.1.1"
-<<<<<<< HEAD
   local_notifier:
     dependency: "direct main"
     description:
@@ -794,8 +778,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.6"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   macros:
     dependency: transitive
     description:
@@ -844,7 +826,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.0"
-<<<<<<< HEAD
   octo_image:
     dependency: transitive
     description:
@@ -853,8 +834,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.0"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   package_config:
     dependency: transitive
     description:
@@ -1047,7 +1026,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.0.2"
-<<<<<<< HEAD
   rxdart:
     dependency: transitive
     description:
@@ -1056,8 +1034,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   share_plus:
     dependency: "direct main"
     description:
@@ -1151,7 +1127,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "7.0.0"
-<<<<<<< HEAD
   sqflite:
     dependency: transitive
     description:
@@ -1192,8 +1167,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.0"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   stack_trace:
     dependency: transitive
     description:
@@ -1242,7 +1215,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "28.2.9"
-<<<<<<< HEAD
   synchronized:
     dependency: transitive
     description:
@@ -1251,8 +1223,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "3.3.0+3"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   term_glyph:
     dependency: transitive
     description:
@@ -1277,7 +1247,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.5"
-<<<<<<< HEAD
   timezone:
     dependency: transitive
     description:
@@ -1286,8 +1255,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.10.0"
-=======
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   typed_data:
     dependency: transitive
     description:

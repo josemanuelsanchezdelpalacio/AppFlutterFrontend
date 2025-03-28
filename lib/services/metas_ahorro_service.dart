@@ -109,7 +109,6 @@ class MetasAhorroService {
   //metodo para actualizar las metas de ahorro afectadas por una transaccion
   Future<void> actualizarMetasPorTransaccion(
       int idUsuario, Transaccion transaccion) async {
-<<<<<<< HEAD
     if (transaccion.tipoTransaccion != TipoTransacciones.INGRESO ||
         transaccion.metaAhorroId == null) return;
 
@@ -152,13 +151,13 @@ class MetasAhorroService {
       final meta =
           await obtenerMetaAhorroPorId(idUsuario, transaccion.metaAhorroId!);
 
-      // Calcular los nuevos valores
+      //calculo los nuevos valores
       double nuevaCantidadActual = meta.cantidadActual - transaccion.cantidad;
       if (nuevaCantidadActual < 0) nuevaCantidadActual = 0;
 
       bool estaCompletada = nuevaCantidadActual >= meta.cantidadObjetivo;
 
-      // Actualizar la meta
+      //actualizo la meta
       final metaActualizada = MetaAhorro(
         id: meta.id,
         nombre: meta.nombre,
@@ -172,95 +171,6 @@ class MetasAhorroService {
       await actualizarMetaAhorro(idUsuario, meta.id!, metaActualizada);
     } catch (e) {
       throw Exception('Error al revertir transacción en meta: $e');
-=======
-    //compruebo que la transaccion es de tipo ingreso
-    if (transaccion.tipoTransaccion != TipoTransacciones.INGRESO) return;
-
-    try {
-      //obtengo todas las metas del usuario
-      final metas = await obtenerMetasAhorro(idUsuario);
-
-      //filtro las metas que coincidan con la categoria de la transaccion
-      final metasAfectadas = metas
-          .where((m) =>
-              m.categoria.toLowerCase() == transaccion.categoria.toLowerCase())
-          .toList();
-
-      //actualizo cada meta afectada
-      for (var meta in metasAfectadas) {
-        //incremento la cantidad actual con el monto de la transacción
-        double nuevaCantidadActual = meta.cantidadActual + transaccion.cantidad;
-
-        //compruebo si se completa la meta
-        bool estaCompletada = nuevaCantidadActual >= meta.cantidadObjetivo;
-
-        //limito la cantidad actual al objetivo si se completa
-        if (nuevaCantidadActual > meta.cantidadObjetivo) {
-          nuevaCantidadActual = meta.cantidadObjetivo;
-        }
-
-        //actualizo la meta con los nuevos valores
-        final metaActualizada = MetaAhorro(
-          id: meta.id,
-          nombre: meta.nombre,
-          categoria: meta.categoria,
-          cantidadObjetivo: meta.cantidadObjetivo,
-          cantidadActual: nuevaCantidadActual,
-          fechaObjetivo: meta.fechaObjetivo,
-          completada: estaCompletada,
-        );
-
-        //actualzio la meta en el backend
-        await actualizarMetaAhorro(idUsuario, meta.id!, metaActualizada);
-      }
-    } catch (e) {
-      throw Exception('Error al actualizar metas por transacción: $e');
-    }
-  }
-
-  //metodo para revertir los efectos de una transaccion en las metas de ahorro
-  Future<void> revertirTransaccion(
-      int idUsuario, Transaccion transaccion) async {
-    if (transaccion.tipoTransaccion != TipoTransacciones.INGRESO) return;
-
-    try {
-      //obtengo todas las metas del usuario
-      final metas = await obtenerMetasAhorro(idUsuario);
-
-      //filtro las metas que coincidan con la categoria de la transaccion
-      final metasAfectadas = metas
-          .where((m) =>
-              m.categoria.toLowerCase() == transaccion.categoria.toLowerCase())
-          .toList();
-
-      //revierto los efectos en cada meta
-      for (var meta in metasAfectadas) {
-        //calculo los nuevos valores restando la transaccion
-        double nuevaCantidadActual = meta.cantidadActual - transaccion.cantidad;
-
-        //comrpruebo que no quede en negativo
-        if (nuevaCantidadActual < 0) nuevaCantidadActual = 0;
-
-        //compruebo si cambia el estado de completado
-        bool estaCompletada = nuevaCantidadActual >= meta.cantidadObjetivo;
-
-        //actualizo la meta con los nuevos valores
-        final metaActualizada = MetaAhorro(
-          id: meta.id,
-          nombre: meta.nombre,
-          categoria: meta.categoria,
-          cantidadObjetivo: meta.cantidadObjetivo,
-          cantidadActual: nuevaCantidadActual,
-          fechaObjetivo: meta.fechaObjetivo,
-          completada: estaCompletada,
-        );
-
-        //actualizo la meta en el backend
-        await actualizarMetaAhorro(idUsuario, meta.id!, metaActualizada);
-      }
-    } catch (e) {
-      throw Exception('Error al revertir transacción en metas: $e');
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     }
   }
 }

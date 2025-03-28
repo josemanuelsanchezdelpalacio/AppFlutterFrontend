@@ -8,11 +8,7 @@ class AddMetasAhorroViewModel {
   final MetaAhorro? metaAhorroParaEditar;
   final MetasAhorroService _metasAhorroService = MetasAhorroService();
 
-<<<<<<< HEAD
   //controladores para los campos
-=======
-  // Controladores para los campos
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   final TextEditingController nombreController = TextEditingController();
   final TextEditingController categoriaController = TextEditingController();
   final TextEditingController categoriaPersonalizadaController =
@@ -31,11 +27,7 @@ class AddMetasAhorroViewModel {
   bool _isCustomCategory = false;
   bool mostrarCampoNuevaCategoria = false;
 
-<<<<<<< HEAD
   //uso categorías predefinidas de ingresos de CategoriasData
-=======
-  // Usar categorías predefinidas de ingresos de CategoriasData
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   List<String> categoriasPredefinidas = CategoriasData.categoriasIngresos;
 
   AddMetasAhorroViewModel({
@@ -74,22 +66,14 @@ class AddMetasAhorroViewModel {
           metaAhorroParaEditar!.cantidadActual.toString();
       _fechaObjetivo = metaAhorroParaEditar!.fechaObjetivo;
     } else {
-<<<<<<< HEAD
       //inicializo para una nueva meta con valores por defecto
-=======
-      // Inicializo para una nueva meta con valores por defecto
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
       nombreController.text = '';
       categoriaController.text = categoriasPredefinidas.first;
       cantidadActualController.text = '0.0';
     }
   }
 
-<<<<<<< HEAD
   //metodos para actualizar el estado
-=======
-  // Métodos para actualizar el estado
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   void setLoading(bool loading) {
     _isLoading = loading;
   }
@@ -128,11 +112,7 @@ class AddMetasAhorroViewModel {
     mostrarCampoNuevaCategoria = false;
   }
 
-<<<<<<< HEAD
   //metodo para guardar la meta de ahorro
-=======
-  // Método para guardar la meta de ahorro
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   Future<String> guardarMetaAhorro() async {
     _errorMessage = null;
 
@@ -165,20 +145,12 @@ class AddMetasAhorroViewModel {
       );
 
       if (_isEditing) {
-<<<<<<< HEAD
         //actualizo la meta existente
-=======
-        // Actualizo la meta existente
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         await _metasAhorroService.actualizarMetaAhorro(
             idUsuario, metaAhorro.id!, metaAhorro);
         return 'Meta de ahorro actualizada correctamente';
       } else {
-<<<<<<< HEAD
         //creo una nueva meta
-=======
-        // Creo una nueva meta
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
         await _metasAhorroService.crearMetaAhorro(idUsuario, metaAhorro);
         return 'Meta de ahorro creada correctamente';
       }
@@ -189,11 +161,7 @@ class AddMetasAhorroViewModel {
     }
   }
 
-<<<<<<< HEAD
   //libero recursos
-=======
-  // Libero recursos
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   void dispose() {
     nombreController.dispose();
     categoriaController.dispose();
@@ -202,9 +170,5 @@ class AddMetasAhorroViewModel {
     cantidadObjetivoController.dispose();
     cantidadActualController.dispose();
   }
-<<<<<<< HEAD
 }
 
-=======
-}
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503

@@ -1,19 +1,11 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
 import 'package:flutter_proyecto_app/components/barra_inferior_secciones.dart';
-=======
-import 'package:flutter_proyecto_app/components/custom_bottom_app_bar.dart';
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/components/menu_desplegable.dart';
 import 'package:flutter_proyecto_app/models/calculos_viewmodel.dart';
 import 'package:flutter_proyecto_app/screens/calculos_screens/seccion_prestamos.dart';
 import 'package:flutter_proyecto_app/screens/calculos_screens/seccion_proyecciones.dart';
 import 'package:flutter_proyecto_app/screens/calculos_screens/seccion_roi.dart';
-<<<<<<< HEAD
 import 'package:flutter_proyecto_app/screens/calculos_screens/seccion_tiempo_meta.dart';
-=======
-import 'package:flutter_proyecto_app/screens/calculos_screens/tiempo_meta.dart';
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
 import 'package:flutter_proyecto_app/theme/app_theme.dart';
 import 'package:provider/provider.dart';
 
@@ -174,7 +166,6 @@ class _CalculosFinancierosScreenState extends State<CalculosFinancierosScreen>
                 : TabBarView(
                     controller: _tabController,
                     children: [
-<<<<<<< HEAD
                       SeccionProyecciones(),
                       SeccionRoi(),
                       SeccionPrestamos(),
@@ -183,16 +174,6 @@ class _CalculosFinancierosScreenState extends State<CalculosFinancierosScreen>
                   ),
             bottomNavigationBar: BarraInferiorSecciones(
                 idUsuario: widget.idUsuario, indexActual: 0),
-=======
-                      ProyeccionesTab(),
-                      ROITab(),
-                      PrestamosTab(),
-                      TiempoMetaTab(),
-                    ],
-                  ),
-            bottomNavigationBar: CustomBottomNavBar(
-                idUsuario: widget.idUsuario, currentIndex: 0),
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
           );
         },
       ),

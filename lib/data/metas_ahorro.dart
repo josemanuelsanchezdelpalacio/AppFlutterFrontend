@@ -19,11 +19,7 @@ class MetaAhorro {
     this.completada = false,
   });
   
-<<<<<<< HEAD
   factory MetaAhorro.fromJson(Map json) {
-=======
-  factory MetaAhorro.fromJson(Map<String, dynamic> json) {
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     return MetaAhorro(
       id: json['id'],
       nombre: json['nombre'],
@@ -35,11 +31,7 @@ class MetaAhorro {
     );
   }
   
-<<<<<<< HEAD
   Map toJson() {
-=======
-  Map<String, dynamic> toJson() {
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
     return {
       if (id != null) 'id': id,
       'nombre': nombre,
@@ -51,26 +43,17 @@ class MetaAhorro {
     };
   }
   
-<<<<<<< HEAD
   // Formato de moneda
-=======
-  //formato de moneda
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   String formatearCantidad(double cantidad) {
     final formatoMoneda = NumberFormat.currency(locale: 'es_ES', symbol: '€');
     return formatoMoneda.format(cantidad);
   }
   
-<<<<<<< HEAD
   // Calculo el progreso
-=======
-  //calculo el progreso
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   double get progreso => cantidadObjetivo > 0 
       ? (cantidadActual / cantidadObjetivo).clamp(0.0, 1.0) 
       : 0.0;
   
-<<<<<<< HEAD
   // Días restantes
   int get diasRestantes => fechaObjetivo.difference(DateTime.now()).inDays;
   
@@ -78,15 +61,6 @@ class MetaAhorro {
   bool get estaVencida => !completada && fechaObjetivo.isBefore(DateTime.now());
   
   // Copio con las modificaciones
-=======
-  //dias restantes
-  int get diasRestantes => fechaObjetivo.difference(DateTime.now()).inDays;
-  
-  //compruebo si esta vencida
-  bool get estaVencida => !completada && fechaObjetivo.isBefore(DateTime.now());
-  
-  //copio con las modificaciones
->>>>>>> 8f1d397338e300a443102a7f54c5ce411ddd3503
   MetaAhorro copyWith({
     int? id,
     String? nombre,
