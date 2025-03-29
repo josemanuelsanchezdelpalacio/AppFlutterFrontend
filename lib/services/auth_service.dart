@@ -15,11 +15,29 @@ class AuthService {
   Future<AuthResponse> registrarUsuario(Usuario usuario,
       {bool isGoogleSignIn = false}) async {
     try {
+      UserCredential? userCredential;
+
+      if (!isGoogleSignIn) {
+        // Validar campos requeridos para registro local
+        usuario.validarParaRegistroLocal();
+
+        try {
+          userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+            email: usuario.email,
+            password: usuario.password!,
+          );
+        } on FirebaseAuthException catch (e) {
+          throw Exception(_mapFirebaseError(e.code));
+        }
+      }
+
       final Map<String, dynamic> requestBody = {
         'email': usuario.email,
-        'password': usuario.password,
+        if (!isGoogleSignIn) 'password': usuario.password,
         'authProvider': isGoogleSignIn ? 'GOOGLE' : 'LOCAL',
-        'idUsuarioFirebase': usuario.idUsuarioFirebase,
+        'idUsuarioFirebase': isGoogleSignIn
+            ? usuario.idUsuarioFirebase
+            : userCredential?.user?.uid,
       };
 
       final response = await http.post(
@@ -31,11 +49,30 @@ class AuthService {
       if (response.statusCode == 200) {
         return AuthResponse.fromJson(jsonDecode(response.body));
       } else {
+        // Revertir creación en Firebase si falla el backend
+        if (userCredential != null) {
+          await userCredential.user?.delete();
+        }
         final error = jsonDecode(response.body);
         throw Exception(error['message'] ?? 'Error en el registro');
       }
     } catch (e) {
-      throw Exception('Error de conexion: $e');
+      throw Exception('Error de conexión: ${e.toString()}');
+    }
+  }
+
+  String _mapFirebaseError(String code) {
+    switch (code) {
+      case 'email-already-in-use':
+        return 'El email ya está registrado';
+      case 'invalid-email':
+        return 'El email no es válido';
+      case 'operation-not-allowed':
+        return 'La autenticación por email/contraseña no está habilitada';
+      case 'weak-password':
+        return 'La contraseña es demasiado débil';
+      default:
+        return 'Error en el registro: $code';
     }
   }
 
@@ -67,26 +104,30 @@ class AuthService {
 
   //metodo para que el usuario local pueda recuperar la contraseña
   Future<void> recuperarContrasenia(String email) async {
+    if (email.isEmpty || !email.contains('@')) {
+      throw Exception('Por favor ingresa un email válido');
+    }
+
     try {
-      //compruebo si el usuario existe en la base de datos
+      // Primero verificamos con el backend
       final response = await http.post(
         Uri.parse('$baseUrl/solicitar-recuperacion'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'email': email,
-        }),
+        body: jsonEncode({'email': email}),
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode == 200) {
+        // Si el backend aprueba, enviamos el email de recuperación
+        await _firebaseAuth.sendPasswordResetEmail(email: email);
+      } else {
         final error = jsonDecode(response.body);
-        throw Exception(error['message'] ??
-            'Error al solicitar la recuperacion de contraseña');
+        throw Exception(
+            error['message'] ?? 'No se pudo solicitar la recuperación');
       }
-
-      //uso Firebase para el envio del correo de recuperacion
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
+    } on FirebaseAuthException catch (e) {
+      throw Exception(_mapFirebaseError(e.code));
     } catch (e) {
-      throw Exception('Error al solicitar la recuperacion de contraseña: $e');
+      throw Exception('Error al procesar la solicitud: ${e.toString()}');
     }
   }
 
@@ -125,7 +166,6 @@ class AuthService {
         final responseData = jsonDecode(response.body);
         return AuthResponse.fromJson(responseData);
       } else if (response.statusCode == 404) {
-
         //registramos el usuario
         final usuario = Usuario(
           email: userCredential.user!.email!,
@@ -152,5 +192,3 @@ class AuthService {
     ]);
   }
 }
-
-

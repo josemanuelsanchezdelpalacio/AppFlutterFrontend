@@ -7,6 +7,7 @@ class Presupuesto {
   final DateTime fechaFin;
   final double cantidadGastada;
   final double cantidadRestante;
+  bool completado;
 
   Presupuesto({
     this.id,
@@ -17,12 +18,12 @@ class Presupuesto {
     required this.fechaFin,
     double? cantidadGastada,
     double? cantidadRestante,
+    this.completado = false
   }) : 
     this.cantidadGastada = cantidadGastada ?? 0.0,
     this.cantidadRestante = cantidadRestante ?? (cantidad - (cantidadGastada ?? 0.0));
   
   factory Presupuesto.fromJson(Map json) {
-    // Parse dates safely
     DateTime parseDate(dynamic dateStr) {
       try {
         return dateStr is String ? DateTime.parse(dateStr) : DateTime.now();
@@ -31,7 +32,6 @@ class Presupuesto {
       }
     }
 
-    // Safely convert to double with default
     double safeDouble(dynamic value, [double defaultValue = 0.0]) {
       if (value == null) return defaultValue;
       return (value is num) ? value.toDouble() : defaultValue;
@@ -49,6 +49,7 @@ class Presupuesto {
       fechaFin: parseDate(json['fechaFin']),
       cantidadGastada: cantidadGastada,
       cantidadRestante: cantidad - cantidadGastada,
+      completado: json['completado'] ?? false,
     );
   }
 
@@ -62,10 +63,10 @@ class Presupuesto {
       'fechaFin': fechaFin.toIso8601String(),
       'cantidadGastada': cantidadGastada,
       'cantidadRestante': cantidadRestante,
+      'completado': completado
     };
   }
 
-  // Método para actualizar un presupuesto con una transacción
   Presupuesto actualizarConTransaccion(double transactionAmount) {
     double newCantidadGastada = cantidadGastada + transactionAmount;
     double newCantidadRestante = cantidad - newCantidadGastada;
@@ -79,14 +80,26 @@ class Presupuesto {
       fechaFin: fechaFin,
       cantidadGastada: newCantidadGastada,
       cantidadRestante: newCantidadRestante,
+      completado: completado
     );
   }
 
-  // Método para comprobar si una transacción se aplica a este presupuesto
   bool isTransactionApplicable(DateTime transactionDate) {
     return !transactionDate.isBefore(fechaInicio) &&
         !transactionDate.isAfter(fechaFin);
   }
-}
 
+  int get diasRestantes => fechaFin.difference(DateTime.now()).inDays;
+  
+  String get textoTiempoRestante {
+    final dias = diasRestantes;
+    if (dias > 0) {
+      return '$dias días restantes';
+    } else if (dias == 0) {
+      return 'Vence hoy';
+    } else {
+      return 'Vencido hace ${-dias} días';
+    }
+  }
+}
 

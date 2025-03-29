@@ -43,24 +43,19 @@ class MetaAhorro {
     };
   }
   
-  // Formato de moneda
   String formatearCantidad(double cantidad) {
     final formatoMoneda = NumberFormat.currency(locale: 'es_ES', symbol: '€');
     return formatoMoneda.format(cantidad);
   }
   
-  // Calculo el progreso
   double get progreso => cantidadObjetivo > 0 
       ? (cantidadActual / cantidadObjetivo).clamp(0.0, 1.0) 
       : 0.0;
   
-  // Días restantes
   int get diasRestantes => fechaObjetivo.difference(DateTime.now()).inDays;
   
-  // Compruebo si está vencida
   bool get estaVencida => !completada && fechaObjetivo.isBefore(DateTime.now());
   
-  // Copio con las modificaciones
   MetaAhorro copyWith({
     int? id,
     String? nombre,

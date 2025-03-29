@@ -33,7 +33,6 @@ class LoginViewModel with ChangeNotifier {
       );
 
       if (respuesta.success && context.mounted) {
-
         ScaffoldMessenger.of(context).clearSnackBars();
 
         Navigator.pushReplacementNamed(
@@ -68,7 +67,6 @@ class LoginViewModel with ChangeNotifier {
       final respuesta = await _authService.inicioSesionGoogle();
 
       if (respuesta.success && context.mounted) {
-
         ScaffoldMessenger.of(context).clearSnackBars();
 
         Navigator.pushReplacementNamed(
@@ -96,10 +94,30 @@ class LoginViewModel with ChangeNotifier {
 
   Future<void> recuperarContrasena(String email) async {
     try {
+      _setLoading(true);
+      _setError(null);
+
       await _authService.recuperarContrasenia(email);
+
+      // Si llega aquí, todo fue bien
+      _setError(null);
     } catch (e) {
-      throw Exception(e.toString().replaceAll('Exception:', '').trim());
+      // Manejar errores específicos
+      String errorMessage = e.toString();
+      if (errorMessage.contains('firebase')) {
+        errorMessage =
+            'Error al enviar el correo de recuperación. Por favor intenta nuevamente.';
+      } else if (errorMessage.contains('registrado')) {
+        errorMessage = 'No existe una cuenta con este email.';
+      } else if (errorMessage.contains('GOOGLE')) {
+        errorMessage =
+            'Este email está registrado con Google. Por favor inicia sesión con Google.';
+      }
+
+      _setError(errorMessage.replaceAll('Exception:', '').trim());
+      rethrow;
+    } finally {
+      _setLoading(false);
     }
   }
 }
-

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_proyecto_app/data/metas_ahorro.dart';
 import 'package:flutter_proyecto_app/services/metas_ahorro_service.dart';
 import 'package:intl/intl.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class MetasAhorroViewModel extends ChangeNotifier {
   final int userId;
   final MetasAhorroService _metasAhorroService = MetasAhorroService();
+  final FlutterLocalNotificationsPlugin notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   bool _isLoading = false;
   List<MetaAhorro> _metasAhorro = [];
@@ -22,7 +25,31 @@ class MetasAhorroViewModel extends ChangeNotifier {
     'Próximas a vencer'
   ];
 
-  MetasAhorroViewModel(this.userId);
+  MetasAhorroViewModel(this.userId) {
+    _initNotifications();
+  }
+
+  Future<void> _initNotifications() async {
+    const AndroidInitializationSettings initializationSettingsAndroid = 
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    final InitializationSettings initializationSettings = 
+        InitializationSettings(android: initializationSettingsAndroid);
+    await notificationsPlugin.initialize(initializationSettings);
+  }
+
+  Future<void> _mostrarNotificacion(String titulo, String cuerpo) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics = 
+        AndroidNotificationDetails(
+            'metas_channel', 
+            'Metas de Ahorro',
+            importance: Importance.max,
+            priority: Priority.high,
+            showWhen: false);
+    const NotificationDetails platformChannelSpecifics = 
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await notificationsPlugin.show(
+        0, titulo, cuerpo, platformChannelSpecifics);
+  }
 
   bool get isLoading => _isLoading;
   List<MetaAhorro> get metasAhorro => _metasAhorro;
@@ -46,6 +73,20 @@ class MetasAhorroViewModel extends ChangeNotifier {
       final metas = await _metasAhorroService.obtenerMetasAhorro(userId);
       _metasAhorro = metas;
       _generarMesesDisponibles();
+      
+      // Verificar si alguna meta se ha completado
+      for (var meta in _metasAhorro) {
+        if (meta.cantidadActual >= meta.cantidadObjetivo && !meta.completada) {
+          await _mostrarNotificacion(
+            'Meta completada',
+            '¡Has completado tu meta de ahorro "${meta.nombre}"!'
+          );
+          // Actualizar estado a completada
+          meta.completada = true;
+          await _metasAhorroService.actualizarMetaAhorro(userId, meta.id!, meta);
+        }
+      }
+      
       _isLoading = false;
       notifyListeners();
     } catch (e) {
@@ -136,19 +177,12 @@ class MetasAhorroViewModel extends ChangeNotifier {
   }
 
   double calcularProgreso(MetaAhorro meta) {
-    if (meta.cantidadObjetivo <= 0) return 0.0; // Evitar división por cero
-    
-    double progreso = meta.cantidadActual / meta.cantidadObjetivo;
-    
-    // Limitar el progreso entre 0.0 y 1.0
-    if (progreso < 0.0) return 0.0;
-    if (progreso > 1.0) return 1.0;
-    
-    return progreso;
+    if (meta.cantidadObjetivo <= 0) return 0.0;
+    return (meta.cantidadActual / meta.cantidadObjetivo).clamp(0.0, 1.0);
   }
 
   bool estaVencida(MetaAhorro meta) {
-    return diasRestantes(meta) < 0 && !meta.completada;
+    return !meta.completada && meta.fechaObjetivo.isBefore(DateTime.now());
   }
 
   int diasRestantes(MetaAhorro meta) {

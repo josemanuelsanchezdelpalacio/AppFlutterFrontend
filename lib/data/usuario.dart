@@ -66,6 +66,12 @@ class Usuario {
       authProvider: this.authProvider,
     );
   }
+
+   void validarParaRegistroLocal() {
+    if (password == null || password!.isEmpty) {
+      throw Exception('La contraseña es requerida para registro local');
+    }
+  }
 }
 
 

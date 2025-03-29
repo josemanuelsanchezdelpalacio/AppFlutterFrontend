@@ -504,7 +504,7 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
     );
   }
 
-  Widget _buildMetaCard(MetaAhorro meta) {
+Widget _buildMetaCard(MetaAhorro meta) {
     double progreso = _viewModel.calcularProgreso(meta);
     bool estaVencida = _viewModel.estaVencida(meta);
     bool isSelected = meta.id != null && _selectedMetas.contains(meta.id!);
@@ -608,10 +608,9 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
                   CircularPercentIndicator(
                     radius: 35.0,
                     lineWidth: 8.0,
-                    percent: progreso.clamp(
-                        0.0, 1.0), // Asegurar que esté entre 0 y 1
+                    percent: progreso,
                     center: Text(
-                      '${(progreso.clamp(0.0, 1.0) * 100).toInt()}%',
+                      '${(progreso * 100).toInt()}%',
                       style: const TextStyle(
                           fontWeight: FontWeight.bold, fontSize: 14.0),
                     ),
@@ -664,28 +663,25 @@ class _MetasAhorroScreenState extends State<MetasAhorroScreen> {
                   ),
                 ],
               ),
-              if (!meta.completada && !estaVencida)
-                Padding(
-                  padding: const EdgeInsets.only(top: 4),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.timer_outlined,
-                          size: 14, color: AppTheme.blanco),
-                      const SizedBox(width: 4),
-                      Text(
-                        _viewModel.obtenerTextoTiempoRestante(meta),
-                        style: TextStyle(
-                          color: _viewModel.diasRestantes(meta) < 7
-                              ? Colors.orange
-                              : AppTheme.blanco,
-                          fontWeight: _viewModel.diasRestantes(meta) < 7
-                              ? FontWeight.bold
-                              : FontWeight.normal,
-                        ),
-                      ),
-                    ],
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.timer_outlined,
+                      size: 14, color: AppTheme.blanco),
+                  const SizedBox(width: 4),
+                  Text(
+                    _viewModel.obtenerTextoTiempoRestante(meta),
+                    style: TextStyle(
+                      color: _viewModel.diasRestantes(meta) < 7
+                          ? Colors.orange
+                          : AppTheme.blanco,
+                      fontWeight: _viewModel.diasRestantes(meta) < 7
+                          ? FontWeight.bold
+                          : FontWeight.normal,
+                    ),
                   ),
-                ),
+                ],
+              ),
             ],
           ),
         ),

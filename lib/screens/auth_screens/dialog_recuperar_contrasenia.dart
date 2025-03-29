@@ -12,10 +12,12 @@ class DialogRecuperarContrasenia extends StatefulWidget {
   });
 
   @override
-  State<DialogRecuperarContrasenia> createState() => _DialogRecuperarContraseniaState();
+  State<DialogRecuperarContrasenia> createState() =>
+      _DialogRecuperarContraseniaState();
 }
 
-class _DialogRecuperarContraseniaState extends State<DialogRecuperarContrasenia> {
+class _DialogRecuperarContraseniaState
+    extends State<DialogRecuperarContrasenia> {
   final formKey = GlobalKey<FormState>();
   final emailController = TextEditingController();
   bool isLoading = false;
@@ -42,16 +44,13 @@ class _DialogRecuperarContraseniaState extends State<DialogRecuperarContrasenia>
 
       setState(() {
         successMessage =
-            'Se ha enviado un enlace de recuperación a tu correo electrónico.';
+            'Se ha enviado un enlace de recuperación a tu correo electrónico. '
+            'Por favor revisa tu bandeja de entrada (y la carpeta de spam).';
         isLoading = false;
       });
 
-      // Cerrar el diálogo después de unos segundos si fue exitoso
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted && Navigator.canPop(context)) {
-          Navigator.pop(context);
-        }
-      });
+      await Future.delayed(const Duration(seconds: 5));
+      if (mounted) Navigator.pop(context);
     } catch (e) {
       setState(() {
         errorMessage = e.toString().replaceAll('Exception:', '').trim();
@@ -185,4 +184,3 @@ class _DialogRecuperarContraseniaState extends State<DialogRecuperarContrasenia>
     );
   }
 }
-
